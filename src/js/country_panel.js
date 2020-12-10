@@ -1,13 +1,14 @@
 import {myChart, graphConfig} from './graph_1';
-let countriesSelector = document.createElement('select');
+
+const countriesSelector = document.createElement('select');
 countriesSelector.classList.add('selectCountry');
 countriesSelector.size = 9;
 
-let recieveDataBtns = document.createElement('div');
+const recieveDataBtns = document.createElement('div');
 recieveDataBtns.classList.add('getDataBtnsWrapper')
-let casesBtn = document.createElement('button');
-let deathBtn = document.createElement('button');
-let recoverBtn = document.createElement('button');
+const casesBtn = document.createElement('button');
+const deathBtn = document.createElement('button');
+const recoverBtn = document.createElement('button');
 casesBtn.classList.add('casesBtn', 'getDataBtns');
 deathBtn.classList.add('deathBtn', 'getDataBtns');
 recoverBtn.classList.add('recoverBtn', 'getDataBtns');
@@ -27,9 +28,9 @@ document.body.appendChild(countriesSelector);
 // ----------------------------------------------------get data covid-------------------
 let countryDataArray;
 async function getData(status, country, month, day) {
-    let response = await fetch(
+    const response = await fetch(
         `https://api.covid19api.com/total/country/${country}/status/${status}?from=2020-${month}-${day}T00:00:00Z&to=2020-${month}-${day}T23:59:59Z`);
-    let data  = await response.json();
+    const data  = await response.json();
     countryDataArray.push(data[0].Cases);
     return data;       
 };
@@ -39,7 +40,7 @@ const lastDaysArray = ['31','29','31','30','31','30','31','31','30','31','30', '
 casesBtn.addEventListener('click', async ()=> {
     countryDataArray = [];
     for (let index = 1; index < 11; index++) {
-        await getData('confirmed', dataReceiveFromClick, index < 10 ? '0' + index : index, lastDaysArray[index - 1]);
+        await getData('confirmed', dataReceiveFromClick, index < 10 ? `0${  index}` : index, lastDaysArray[index - 1]);
     }
     graphConfig.data.datasets[0].data = countryDataArray;
     graphConfig.options.title.text = `Total cases in the ${dataReceiveFromClick}`;
@@ -49,7 +50,7 @@ casesBtn.addEventListener('click', async ()=> {
 deathBtn.addEventListener('click', async ()=> {
     countryDataArray = [];
     for (let index = 1; index < 11; index++) {
-        await getData('deaths', dataReceiveFromClick, index < 10 ? '0' + index : index, lastDaysArray[index - 1]);
+        await getData('deaths', dataReceiveFromClick, index < 10 ? `0${  index}` : index, lastDaysArray[index - 1]);
     }
     graphConfig.data.datasets[0].data = countryDataArray;
     graphConfig.options.title.text = `Total deaths in the ${dataReceiveFromClick}`;
@@ -59,7 +60,7 @@ deathBtn.addEventListener('click', async ()=> {
 recoverBtn.addEventListener('click', async ()=> {
     countryDataArray = [];
     for (let index = 1; index < 11; index++) {
-        await getData('recovered', dataReceiveFromClick, index < 10 ? '0' + index : index, lastDaysArray[index - 1]);
+        await getData('recovered', dataReceiveFromClick, index < 10 ? `0${  index}` : index, lastDaysArray[index - 1]);
     }
     graphConfig.data.datasets[0].data = countryDataArray;
     graphConfig.options.title.text = `Total recovered in the ${dataReceiveFromClick}`;
@@ -69,15 +70,15 @@ recoverBtn.addEventListener('click', async ()=> {
 // ------------------------------------get country population data ------------------------
 
 async function getAllCountries() {
-let response = await fetch(`https://restcountries.eu/rest/v2/all?fields=name;population;flag`)
-let data  = await response.json();
+const response = await fetch(`https://restcountries.eu/rest/v2/all?fields=name;population;flag`)
+const data  = await response.json();
 return data;    
 };
 
 (async function countries () {
-let data = await getAllCountries()
+const data = await getAllCountries()
 for (let index = 0; index < data.length; index++) {
-    let options = document.createElement('option');
+    const options = document.createElement('option');
     options.textContent = data[index].name;
     if (index === 0) {
         options.selected = true;

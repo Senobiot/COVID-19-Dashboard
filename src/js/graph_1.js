@@ -1,14 +1,14 @@
-let graph_wrapper = document.createElement('div');
+const graph_wrapper = document.createElement('div');
 graph_wrapper.classList.add('graphWrapper');
 
-let graph = document.createElement('canvas');
+const graph = document.createElement('canvas');
 graph.id = 'myChart';
 graph_wrapper.appendChild(graph);
 document.body.appendChild(graph_wrapper);
 
-let ctx = document.getElementById('myChart').getContext('2d');
+const ctx = document.getElementById('myChart').getContext('2d');
 
-let graphConfig = {
+const graphConfig = {
     type: 'line',
     data: {
         labels: ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
@@ -33,7 +33,7 @@ let graphConfig = {
             yAxes: [{
                 ticks: {
                     beginAtZero: true,
-                    callback: function(value, index, values) {
+                    callback(value, index, values) {
                         return String(value).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
                     }
                 }
@@ -42,7 +42,7 @@ let graphConfig = {
     }
 }
 
-let myChart = new Chart(ctx, graphConfig);
+const myChart = new Chart(ctx, graphConfig);
 
 // graphButtonsAdd.addEventListener('click', ()=> {
 //     const newDataSet = {
