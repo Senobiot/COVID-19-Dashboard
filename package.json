@@ -1,7 +1,7 @@
 {
-  "name": "english-for-kids",
+  "name": "COVID-19-Dashboard",
   "version": "1.0.0",
-  "description": "English for kids",
+  "description": "COVID-19-Dashboard RSSchool Task",
   "main": "src/js/index.js",
   "browserslist": [
     "> 0.25%, not dead"
@@ -13,7 +13,7 @@
     "lint:fix": "eslint --fix --ext .js,.jsx .",
     "clear": "del-cli dist"
   },
-  "author": "Aliaksandr Kulik",
+  "author": "HannaHerman, Sanazez, Senobiot",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.9",
