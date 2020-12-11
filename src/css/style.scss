@@ -1,6 +1,10 @@
 //@import 'fonts.scss';
-//$font_1: 'smartcaps', sans-serif;
 
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;700;900&display=swap');
+
+$font_1: 'Cairo', sans-serif;
+$font_2: 'Rubik', sans-serif;
 
 body {
     display: grid;
@@ -8,17 +12,30 @@ body {
     grid-template-rows: 0.1fr 1fr 0.1fr 1fr;
     grid-column-gap: 5px;
     grid-row-gap: 5px;
+    position: relative;
+    font-family: $font_2;
+    &:after {
+        content: '';
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0.2;
+        background: url('../img/bg1.jpg') 50%/cover no-repeat;
+    }
+    
 }
 .header {
     grid-area: 1 / 1 / 2 / 6;
     width: 100%;
     text-align: center;
-    font-family: Arial, serif;
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 900;
     line-height: 2;
-    color: darkslategray;
-    font-size: 26px;
+    color: #1C2D11;
+    font-size: 36px;
 }
 
 .tableTotalWrapper {
@@ -31,7 +48,7 @@ body {
     border-radius: 5px;
     text-align: center;
     color: orangered;
-    background-color: #cacaca;
+    background-color:#0B340A;
     & > div:nth-child(2) {
         color: deeppink;
     }
@@ -43,7 +60,6 @@ body {
          font-size: 24px;
         font-weight: 700;
         text-transform: uppercase;
-        font-family: Arial, serif;
         line-height: 2;
     }
     h3 {
@@ -58,40 +74,122 @@ body {
     margin: 0 auto;
 }
 
-.recieveDataBtns {
-    grid-area: 3 / 1 / 4 / 2;;
-}
-.getDataBtnsWrapper {
-    display: flex;
-    justify-content: space-between;
-}
-.getDataBtns {
-    width: 30%;
-    height: 40px;
-    text-align: center;
-    background: cadetblue;
-    text-transform: uppercase;
+// .recieveDataBtns {
+//     grid-area: 3 / 1 / 4 / 2;;
+// }
+
+.countriesSearchField {
+    height: 30px;
+    width: 100%;
     font-size: 18px;
     font-weight: 700;
-    font-family: Arial, serif;
+    color: #3b5887;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+    padding: 0 5px;
+    border-radius: 3px;
+    margin-bottom: 5px;
+}
+
+.sortCountryListBtnsWrapper {
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    background-color: #cacaca;
+}
+.sortCountryListBtnsTitle {
+    text-align: center;
+    line-height: 1.5;
+    width: 100%;
+    color: dimgray;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 18px;
+}
+.sortCountryListBtn {
+    height: 24px;
+    width: 24%;
+    text-align: left;
+    padding-left: 0.5em;
+    background: dimgray;
+    color: floralwhite;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 11px;
+    border-radius: 3px;
+    transition: 0.3s;
+    &[sorted="forward"], &[sorted="reverse"] {
+        position: relative;
+        background-color: #488f8f;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+        &:after {
+            content: '\2B9B';
+            position: absolute;
+            display: flex;
+            align-items: center;
+            height: 100%;
+            right: 3px;
+            top: 0;
+        }
+    }
+    &[sorted="reverse"] {
+        &:after {
+            content: '\2B99';
+        }
+    }
+    &[sortedPast ="yes"] {
+        background-color: red;
+        &:after {
+            content: '';
+        }
+    }
+    &:hover {
+        background-color: #488f8f;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;   
+    }
     &:active {
         transform: translate(2px, 2px);
     }
 }
 
-.selectCountry {
-    grid-area: 4 / 1 / 5 / 2;
+.countriesModule {
+    grid-area: 3 / 1 / 5 / 2;
 }
-
-option {
+.countriesList {
+    height: 376px;
+    overflow-y: scroll;
+    width: 100%;
+}
+.country {
     padding: 6px 10px 6px 50px;
     width: 100%;
     margin-bottom: 3px;
-    background-color: wheat;
+    font-weight: 700;
+    font-size: 14px;
+    background-color: #cacaca;
+    background-position: 0% 50%;
+    background-size: 40px;
+    background-repeat: no-repeat;
 }
-option:checked, option:hover {
+.optionValue {
+    display: inline-block;
+    width: 30%;
+    color: green;
+}
+.optionCountryName {
+    display: inline-block;
+    text-align: left;
+}
+.country:hover {
+    cursor: pointer;
     color: white;
     background-color: #488f8f;
+    span:first-child {
+        color: white;
+    }
 }
 
 #map {

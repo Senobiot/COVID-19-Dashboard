@@ -1,6 +1,17 @@
 const tableTotalWrapper = document.createElement('div');
 tableTotalWrapper.classList.add('tableTotalWrapper');
 
+const tableTotalDateWrapper = document.createElement('div');
+const tableTotalDateTitle = document.createElement('h2');
+const tableTotalDate = document.createElement('h3');
+   
+tableTotalDate.classList.add('tableTotalDate');
+
+tableTotalDateTitle.textContent = 'last update'
+
+tableTotalDateWrapper.appendChild(tableTotalDateTitle);
+tableTotalDateWrapper.appendChild(tableTotalDate);
+
 const tableTotalCases = document.createElement('div');
 const tableTotalCasesTitle = document.createElement('h2');
 const tableTotalCasesCounter = document.createElement('h4');
@@ -35,27 +46,29 @@ tableTotalRecoveredCounter.classList.add('tableTotalRecoveredCounter');
 tableTotalRecovered.appendChild(tableTotalRecoveredTitle);
 tableTotalRecovered.appendChild(tableTotalRecoveredCounter);
 
-tableTotalCasesTitle.textContent = "world total cases";
-tableTotalDeathsTitle.textContent = "world total deaths";
-tableTotalRecoveredTitle.textContent = 'world total recovered';
+tableTotalCasesTitle.textContent = "global confirmed";
+tableTotalDeathsTitle.textContent = "global deaths";
+tableTotalRecoveredTitle.textContent = 'global recovered';
 
 
-(async function getTotalData() {
+async function getTotalData() {
     const response = await fetch(`https://api.covid19api.com/summary`)
     const data  = await response.json();
+    tableTotalDate.textContent = (new Date(Date.parse(data.Date))).toUTCString();
     tableTotalCasesCounter.textContent = String(data.Global.TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
     tableTotalDeathsCounter.textContent = String(data.Global.TotalDeaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
     tableTotalRecoveredCounter.textContent = String(data.Global.TotalRecovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-    return data;     
-})();
+    return data; 
+};
 
+tableTotalWrapper.appendChild(tableTotalDateWrapper);
 tableTotalWrapper.appendChild(tableTotalCases);
 tableTotalWrapper.appendChild(tableTotalDeaths);
 tableTotalWrapper.appendChild(tableTotalRecovered);
 
 document.body.appendChild(tableTotalWrapper);
 
-
+export default getTotalData;
 
 // количество случаев заболевания
 // количество летальных исходов
