@@ -1,7 +1,6 @@
 import {myChart, graphConfig} from './graph_1';
 import getTotalData from './table_total';
 
-
 const countriesModule = document.createElement('div');
 countriesModule.classList.add('countriesModule');
 
@@ -74,7 +73,9 @@ searchField.addEventListener("input", function (event) {
 });
 
 // -------------------get countries list and data ----------------------------------
-let summaryData; // тут объект вида {Countries: [192x{массив с 192 объектами стран}], Date: 'дата последних данных',
+let summaryData; 
+let summarySelectedCountryData;
+// тут объект вида {Countries: [192x{массив с 192 объектами стран}], Date: 'дата последних данных',
 // Global {NewConfirmed: 668755, TotalConfirmed: 68884181, NewDeaths: 12540, TotalDeaths: 1569277, NewRecovered: 425817} }
 
 //let countryFlagsAndPopulationData; // !!!! МОЖЕТ НЕ ПОНАДОБИТЬСЯтут объект вида [{flag: "https://restcountries.eu/data/afg.svg", name: "Afghanistan", population: 27657145}x255, ..]
@@ -96,7 +97,9 @@ let summaryData; // тут объект вида {Countries: [192x{массив 
 // };
 
 (async function countries () {
-    summaryData = await getTotalData();
+    // summaryData = await getTotalData();
+    summaryData = (await getTotalData()).default; //убрать
+    console.log(summaryData.default)  //убрать
 
     for (let index = 0; index < summaryData.Countries.length; index++) {
         const option = document.createElement('div');
@@ -109,7 +112,7 @@ let summaryData; // тут объект вида {Countries: [192x{массив 
 
         spanValaue.textContent = String(summaryData.Countries[index].TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
         spanCountryName.textContent = summaryData.Countries[index].Country;
-        // if (index === 0) {console.log(spanValaue) }
+
         option.setAttribute('TotalConfirmed', `${summaryData.Countries[index].TotalConfirmed}`);
         option.setAttribute('TotalDeaths', `${summaryData.Countries[index].TotalDeaths}`);
         option.setAttribute('TotalRecovered', `${summaryData.Countries[index].TotalRecovered}`);
@@ -118,6 +121,16 @@ let summaryData; // тут объект вида {Countries: [192x{массив 
         option.appendChild(spanCountryName);
       
         option.style.backgroundImage = `url( https://www.countryflags.io/${summaryData.Countries[index].CountryCode}/shiny/64.png)`;
+
+        option.addEventListener('click', async function(){
+            async function getTotalCountryData() {
+            const response = await fetch(`https://api.covid19api.com/dayone/country/south-africa`)
+            const data  = await response.json();
+            summarySelectedCountryData = data;
+            return data; 
+        };
+        })
+
         countriesList.appendChild(option);  
     }
 })()
@@ -302,75 +315,4 @@ recoverBtn.addEventListener('click', function() {
     }
 })
 
-// ----------------------------------------------------get data covid-------------------
-let countryDataArray;
-async function getData(status, country, month, day) {
-    const response = await fetch(
-        `https://api.covid19api.com/total/country/${country}/status/${status}?from=2020-${month}-${day}T00:00:00Z&to=2020-${month}-${day}T23:59:59Z`);
-    const data  = await response.json();
-    countryDataArray.push(data[0].Cases);
-    return data;       
-};
-
-let dataReceiveFromClick;
-const lastDaysArray = ['31','29','31','30','31','30','31','31','30','31','30', '09'];
-
-// casesBtn.addEventListener('click', ()=> {
-//     sortCountriesList('TotalDeaths');
-// })
-// casesBtn.addEventListener('click', async ()=> {
-//     countryDataArray = [];
-//     for (let index = 1; index < 11; index++) {
-//         await getData('confirmed', dataReceiveFromClick, index < 10 ? `0${  index}` : index, lastDaysArray[index - 1]);
-//     }
-//     graphConfig.data.datasets[0].data = countryDataArray;
-//     graphConfig.option.title.text = `Total cases in the ${dataReceiveFromClick}`;
-//     myChart.update();
-// })
-
-// deathBtn.addEventListener('click', async ()=> {
-//     countryDataArray = [];
-//     for (let index = 1; index < 11; index++) {
-//         await getData('deaths', dataReceiveFromClick, index < 10 ? `0${  index}` : index, lastDaysArray[index - 1]);
-//     }
-//     graphConfig.data.datasets[0].data = countryDataArray;
-//     graphConfig.option.title.text = `Total deaths in the ${dataReceiveFromClick}`;
-//     myChart.update();
-// })
-
-// recoverBtn.addEventListener('click', async ()=> {
-//     countryDataArray = [];
-//     for (let index = 1; index < 11; index++) {
-//         await getData('recovered', dataReceiveFromClick, index < 10 ? `0${  index}` : index, lastDaysArray[index - 1]);
-//     }
-//     graphConfig.data.datasets[0].data = countryDataArray;
-//     graphConfig.option.title.text = `Total recovered in the ${dataReceiveFromClick}`;
-//     myChart.update();
-// })
-
-// ------------------------------------get country population data ------------------------
-
-// async function getAllCountries() {
-// const response = await fetch(`https://restcountries.eu/rest/v2/all?fields=name;population;flag`)
-// const data  = await response.json();
-// return data;    
-// };
-
-// (async function countries () {
-// const data = await getAllCountries()
-// for (let index = 0; index < data.length; index++) {
-//     const option = document.createElement('option');
-//     option.textContent = data[index].name;
-//     if (index === 0) {
-//         option.selected = true;
-//     }
-//     option.addEventListener('click', function(){
-//         dataReceiveFromClick = this.textContent;
-//     })
-//     option.style.backgroundImage = `url(${data[index].flag})`;
-//     option.style.backgroundPosition = '0% 50%';
-//     option.style.backgroundSize = '40px';
-//     option.style.backgroundRepeat = 'no-repeat';
-//     countriesSelector.appendChild(option);   
-// }
-// })()
+export default summarySelectedCountryData;

@@ -1,3 +1,5 @@
+import * as data from './summary.json';
+
 const tableTotalWrapper = document.createElement('div');
 tableTotalWrapper.classList.add('tableTotalWrapper');
 
@@ -22,7 +24,6 @@ tableTotalCasesCounter.classList.add('tableTotalCasesCounter');
 
 tableTotalCases.appendChild(tableTotalCasesTitle);
 tableTotalCases.appendChild(tableTotalCasesCounter);
-
 
 const tableTotalDeaths = document.createElement('div');
 const tableTotalDeathsTitle = document.createElement('h3');
@@ -50,10 +51,18 @@ tableTotalCasesTitle.textContent = "global confirmed";
 tableTotalDeathsTitle.textContent = "global deaths";
 tableTotalRecoveredTitle.textContent = 'global recovered';
 
+// async function getTotalData() {
+//     const response = await fetch(`https://api.covid19api.com/summary`)
+//     const data  = await response.json();
+//     tableTotalDate.textContent = (new Date(Date.parse(data.Date))).toUTCString();
+//     tableTotalCasesCounter.textContent = String(data.Global.TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+//     tableTotalDeathsCounter.textContent = String(data.Global.TotalDeaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+//     tableTotalRecoveredCounter.textContent = String(data.Global.TotalRecovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+//     return data; 
+// };
 
 async function getTotalData() {
-    const response = await fetch(`https://api.covid19api.com/summary`)
-    const data  = await response.json();
+
     tableTotalDate.textContent = (new Date(Date.parse(data.Date))).toUTCString();
     tableTotalCasesCounter.textContent = String(data.Global.TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
     tableTotalDeathsCounter.textContent = String(data.Global.TotalDeaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
@@ -69,7 +78,3 @@ tableTotalWrapper.appendChild(tableTotalRecovered);
 document.body.appendChild(tableTotalWrapper);
 
 export default getTotalData;
-
-// количество случаев заболевания
-// количество летальных исходов
-// количество выздоровевших
