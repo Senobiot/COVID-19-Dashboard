@@ -1,5 +1,6 @@
 //import getTotalData from './table_total';
 
+
 const graphWrapper = document.createElement('div');
 graphWrapper.classList.add('graphWrapper', 'loading');
 
@@ -68,10 +69,8 @@ const graphConfig = {
             label: 'Global Month Confirmed',
             data: [],
             backgroundColor: '#675d04',
-            borderColor: [
-                //'',
-            ],
-            borderWidth: 2
+            borderColor: '#675d04',
+            //borderWidth: 1
         }]
     },
     options: {
@@ -101,57 +100,6 @@ const graphConfig = {
 
 const myChart = new Chart(ctx, graphConfig);
 
-let lastMonthDates = []; //массив с поледними датами месяцев года
-
-function getLastMonthDates(queryYear) {
-    for (let index = 0; index < 11; index += 1) {
-        let date = new Date(queryYear, index + 1, 0);
-        let year = date.getFullYear();
-        let month = index < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
-        let day = date.getDate();
-        let lastDate = `${year}-${month}-${day}`;
-        lastMonthDates.push(lastDate)
-    }
-        let date = new Date();
-        let year = date.getFullYear();
-        let month =  date.getMonth() + 1 < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
-        let day = date.getDate();
-        let lastDateNow = `${year}-${month}-${day - 1}`;
-        lastMonthDates.push(lastDateNow);
-}
-
-
-let globalDataEveryMonth = [];
-
-let globalMonthConfirmed = [];
-let globalMonthDeaths = [];
-let globalMonthRecovered = [];
-
-(async function GlobalTotalMonths () {
-    getLastMonthDates(2020);
-    async function getData() {
-    for (const item of lastMonthDates) {
-        const response = await fetch(`https://covid-api.com/api/reports/total?date=${item}`);
-        const data  = await response.json();
-        globalDataEveryMonth.push(data.data);
-    } 
-  }
-    await getData();
-    
-    async function dataToGraph() {
-        for (let index = 0; index < globalDataEveryMonth.length; index++) {
-            globalMonthConfirmed.push(globalDataEveryMonth[index].confirmed);
-            globalMonthDeaths.push(globalDataEveryMonth[index].deaths);
-            globalMonthRecovered.push(globalDataEveryMonth[index].recovered);
-        }
-        graphConfig.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct','Nov','Dec',];
-        graphConfig.data.datasets[0].data = globalMonthConfirmed;
-        graphWrapper.classList.remove('loading');
-        myChart.update();
-    }
-    await dataToGraph();
-})();
-
 graphControlPanelTypeBtn.addEventListener('click', function(){
     if(this.checked) {
         graphConfig.type = 'line';
@@ -162,28 +110,4 @@ graphControlPanelTypeBtn.addEventListener('click', function(){
     }
 })
 
-// graphControlPanelCaseBtn1
-// graphControlPanelCaseBtn2
-// graphControlPanelCaseBtn3
-graphControlPanelCaseBtn4.addEventListener('click', function(){
-    graphConfig.data.datasets[0].data = globalMonthConfirmed;
-    graphConfig.data.datasets[0].backgroundColor = '#675d04';
-    graphConfig.data.datasets[0].label = 'Global Month Confirmed';
-    myChart.update();
-})
-graphControlPanelCaseBtn5.addEventListener('click', function(){
-    graphConfig.data.datasets[0].data = globalMonthDeaths;
-    graphConfig.data.datasets[0].backgroundColor = '#842727';
-    graphConfig.data.datasets[0].label = 'Global Month Deaths';
-    myChart.update();
-})
- graphControlPanelCaseBtn6.addEventListener('click', function(){
-    graphConfig.data.datasets[0].data = globalMonthRecovered;
-    graphConfig.data.datasets[0].backgroundColor = '#1b481b';
-    graphConfig.data.datasets[0].label = 'Global Month Recovered';
-    myChart.update();
-})
-
-
-
-export {myChart, graphConfig};
+export {myChart, graphConfig, graphControlPanel, graphWrapper};

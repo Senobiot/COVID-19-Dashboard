@@ -1,4 +1,4 @@
-import {myChart, graphConfig} from './graph_1';
+import {myChart, graphConfig, graphControlPanel, graphWrapper} from './graph_1';
 import getTotalData from './table_total';
 
 const countriesModule = document.createElement('div');
@@ -29,7 +29,9 @@ recoverBtn.classList.add('recoverSortBtn', 'sortCountryListBtn');
 
 sortCountryListBtnsTitle.textContent = 'Sort By:';
 countryBtn.textContent = 'country';
+countryBtn.setAttribute('sorted' , 'reverse');
 confirmedBtn.textContent = 'confirmed';
+confirmedBtn.setAttribute('sortedPast' , 'yes');
 deathBtn.textContent = 'deaths';
 recoverBtn.textContent = 'recovers';
 
@@ -43,11 +45,9 @@ countriesModule.appendChild(sortCountryListBtns);
 countriesModule.appendChild(searchField);
 countriesModule.appendChild(countriesList);
 
-// document.body.appendChild(recieveDataBtns);
 document.body.appendChild(countriesModule);
 
-
-// -----------------------search field logic -----------------------------------
+// -----------------------filter field logic -----------------------------------
 
 let searchFieldArray; //тут для сортировки, когда ввели в поиске что-то
 searchField.addEventListener("input", function (event) {
@@ -74,7 +74,17 @@ searchField.addEventListener("input", function (event) {
 
 // -------------------get countries list and data ----------------------------------
 let summaryData; 
-let summarySelectedCountryData;
+let currentSlug = 'global';
+let currentCountry = 'global';
+let selectedCountryDates = [];
+let selectedCountryConfirmedCummulative = [];
+let selectedCountryDeathsCummulative = [];
+let selectedCountryRecoveredCummulative = [];
+let selectedCountryActive = [];
+let selectedCountryConfirmedDay = [];
+let selectedCountryDeathsDay = [];
+let selectedCountryRecoveredDay = [];
+
 // тут объект вида {Countries: [192x{массив с 192 объектами стран}], Date: 'дата последних данных',
 // Global {NewConfirmed: 668755, TotalConfirmed: 68884181, NewDeaths: 12540, TotalDeaths: 1569277, NewRecovered: 425817} }
 
@@ -88,7 +98,7 @@ let summarySelectedCountryData;
 // })();
 
 
-// async function getAllCountries() {
+// async function getAllCountries() { НАДО!!!!
 //     const response = await fetch(`https://api.covid19api.com/summary`)
 //     const data  = await response.json();
 //     summaryData = data;
@@ -112,24 +122,62 @@ let summarySelectedCountryData;
 
         spanValaue.textContent = String(summaryData.Countries[index].TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
         spanCountryName.textContent = summaryData.Countries[index].Country;
-
-        option.setAttribute('TotalConfirmed', `${summaryData.Countries[index].TotalConfirmed}`);
-        option.setAttribute('TotalDeaths', `${summaryData.Countries[index].TotalDeaths}`);
-        option.setAttribute('TotalRecovered', `${summaryData.Countries[index].TotalRecovered}`);
-        
+        option.setAttribute('Slug', summaryData.Countries[index].Slug);
+       
         option.appendChild(spanValaue);
         option.appendChild(spanCountryName);
       
         option.style.backgroundImage = `url( https://www.countryflags.io/${summaryData.Countries[index].CountryCode}/shiny/64.png)`;
 
-        option.addEventListener('click', async function(){
-            async function getTotalCountryData() {
-            const response = await fetch(`https://api.covid19api.com/dayone/country/south-africa`)
-            const data  = await response.json();
-            summarySelectedCountryData = data;
-            return data; 
-        };
-        })
+        option.addEventListener('click', async function getTotalCountryData() {
+                
+                    const response = await fetch(`https://api.covid19api.com/total/dayone/country/${this.getAttribute('Slug')}`);
+                    const data  = await response.json();
+                    if (currentSlug !== this.getAttribute('Slug')) {
+                        currentSlug = this.getAttribute('Slug');
+                        currentCountry = this.children[1].textContent;
+                        selectedCountryDates = [];
+                        selectedCountryConfirmedCummulative = [];
+                        selectedCountryDeathsCummulative = [];
+                        selectedCountryRecoveredCummulative = [];
+                        selectedCountryActive = [];
+                        selectedCountryConfirmedDay = [];
+                        selectedCountryDeathsDay = [];
+                        selectedCountryRecoveredDay = [];
+
+                        for (let index = 0; index < data.length; index++) {
+                            selectedCountryDates.push(data[index].Date.replace(/2020-/, '' ).replace(/T.*/, ''));
+                            if (currentSlug === 'china' && index === 232) {
+                                selectedCountryConfirmedCummulative.push(90127);
+                            } else {
+                                selectedCountryConfirmedCummulative.push(data[index].Confirmed);
+                            }
+                            selectedCountryDeathsCummulative.push(data[index].Deaths);
+                            selectedCountryRecoveredCummulative.push(data[index].Recovered);
+                            selectedCountryActive.push(data[index].Active);
+
+                            if (index > 0) {
+                                let confirmedCalc = data[index].Confirmed - (data[index - 1].Confirmed);
+                                if (currentSlug === 'china' && index === 232) {
+                                    selectedCountryConfirmedDay.push(27);
+                                } else {
+                                     selectedCountryConfirmedDay.push(confirmedCalc >= 0 ? confirmedCalc : 0);
+                                }  
+                                let confirmedDeaths = data[index].Deaths - (data[index - 1].Deaths);
+                                let recoverCalc = data[index].Recovered - (data[index - 1].Recovered);       
+                                selectedCountryDeathsDay.push(confirmedDeaths >= 0 ? confirmedDeaths : 0);
+                                selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);                          
+                            } 
+                            else {
+                                selectedCountryConfirmedDay.push(data[index].Confirmed);
+                                selectedCountryDeathsDay.push(data[index].Deaths);
+                                selectedCountryRecoveredDay.push(data[index].Recovered);
+                            }     
+                    }
+                    countryDataToGraph();
+                    }
+                return data; 
+            });
 
         countriesList.appendChild(option);  
     }
@@ -161,9 +209,7 @@ function sortCountriesList (sortedValue, sortReverse, originalArray = summaryDat
 
     const countriesListNodes = originalArray.Countries.length < 50 ? document.querySelectorAll('.country:not([filtered])') : document.querySelectorAll('.country');
     for (let index = 0; index < countriesListNodes.length; index++) {
-        countriesListNodes[index].setAttribute('TotalConfirmed', `${originalArray.Countries[index].TotalConfirmed}`);
-        countriesListNodes[index].setAttribute('TotalDeaths', `${originalArray.Countries[index].TotalDeaths}`);
-        countriesListNodes[index].setAttribute('TotalRecovered', `${originalArray.Countries[index].TotalRecovered}`);
+
         if (sortedValue !== 'Country') {
             countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index][sortedValue]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
         }  else {
@@ -178,10 +224,10 @@ function sortCountriesList (sortedValue, sortReverse, originalArray = summaryDat
                 countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index].TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
             }
         }
+        countriesListNodes[index].setAttribute('Slug', originalArray.Countries[index].Slug);
         countriesListNodes[index].children[1].textContent = originalArray.Countries[index].Country;
         countriesListNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${originalArray.Countries[index].CountryCode}/shiny/64.png)`;
     }
-
 }
 
 function disactiveSortBtns(){
@@ -315,4 +361,143 @@ recoverBtn.addEventListener('click', function() {
     }
 })
 
-export default summarySelectedCountryData;
+let lastMonthDates = []; //массив с поледними датами месяцев года
+
+function getLastMonthDates(queryYear) {
+    for (let index = 0; index < 11; index += 1) {
+        let date = new Date(queryYear, index + 1, 0);
+        let year = date.getFullYear();
+        let month = index < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        let day = date.getDate();
+        let lastDate = `${year}-${month}-${day}`;
+        lastMonthDates.push(lastDate)
+    }
+        let date = new Date();
+        let year = date.getFullYear();
+        let month =  date.getMonth() + 1 < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        let day = date.getDate();
+        let lastDateNow = `${year}-${month}-${day - 1}`;
+        lastMonthDates.push(lastDateNow);
+}
+
+
+let globalDataEveryMonth = [];
+
+let globalMonthConfirmed = [];
+let globalMonthDeaths = [];
+let globalMonthRecovered = [];
+
+
+(async function GlobalTotalMonths () {
+    getLastMonthDates(2020);
+    async function getData() {
+    for (const item of lastMonthDates) {
+        const response = await fetch(`https://covid-api.com/api/reports/total?date=${item}`);
+        const data  = await response.json();
+        globalDataEveryMonth.push(data.data);
+    } 
+  }
+    await getData();
+    
+    async function dataToGraph() {
+        for (let index = 0; index < globalDataEveryMonth.length; index++) {
+            globalMonthConfirmed.push(globalDataEveryMonth[index].confirmed);
+            globalMonthDeaths.push(globalDataEveryMonth[index].deaths);
+            globalMonthRecovered.push(globalDataEveryMonth[index].recovered);
+        }
+        graphConfig.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct','Nov','Dec',];
+        graphConfig.data.datasets[0].data = globalMonthConfirmed;
+        graphWrapper.classList.remove('loading');
+        myChart.update();
+    }
+    await dataToGraph();
+})();
+
+
+function countryDataToGraph(dataType = selectedCountryConfirmedCummulative) {
+    graphConfig.data.labels = selectedCountryDates;
+    graphConfig.data.datasets[0].data = dataType;
+    graphConfig.data.datasets[0].backgroundColor = '#675d04';
+    graphConfig.data.datasets[0].borderColor = '#675d04';
+    graphConfig.options.title.text = currentCountry;
+    graphConfig.data.datasets[0].label = 'Total Confirmed';
+    graphWrapper.classList.remove('loading');
+    myChart.update();
+    myChart.update();
+}
+
+
+graphControlPanel.children[0].addEventListener('click', function(){
+    if (!this.hasAttribute('active')) {
+        graphConfig.data.datasets[0].data = selectedCountryConfirmedDay;
+        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].label = 'Confirmed Per Day';
+        graphConfig.data.datasets[0].backgroundColor = '#675d04';
+        graphConfig.data.datasets[0].borderColor = '#675d04';
+        myChart.update();
+        myChart.update();
+    }
+})
+
+
+graphControlPanel.children[1].addEventListener('click', function(){
+    if (!this.hasAttribute('active')) {
+        graphConfig.data.datasets[0].data = selectedCountryDeathsDay;
+        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].label = 'Deaths Per Day';
+        graphConfig.data.datasets[0].backgroundColor = '#842727';
+        graphConfig.data.datasets[0].borderColor = '#842727';
+        myChart.update();
+        myChart.update();
+    }
+})
+
+graphControlPanel.children[2].addEventListener('click', function(){
+    if (!this.hasAttribute('active')) {
+        graphConfig.data.datasets[0].data = selectedCountryRecoveredDay;
+        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].label = 'Recovered Per Day';
+        graphConfig.data.datasets[0].backgroundColor = '#1b481b'; 
+        graphConfig.data.datasets[0].borderColor = '#1b481b';
+        myChart.update();
+        myChart.update();
+    }
+})
+
+graphControlPanel.children[3].addEventListener('click', function(){
+    if (!this.hasAttribute('active')) {
+        graphConfig.data.datasets[0].data = selectedCountryConfirmedCummulative;
+        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].label = 'Total Confirmed';
+        graphConfig.data.datasets[0].backgroundColor = '#675d04';
+        graphConfig.data.datasets[0].borderColor = '#675d04';
+        myChart.update();
+        myChart.update();
+    }
+
+})
+graphControlPanel.children[4].addEventListener('click', function(){
+    if (!this.hasAttribute('active')) {
+        graphConfig.data.datasets[0].data = selectedCountryDeathsCummulative;
+        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].label = 'Total Deaths';
+        graphConfig.data.datasets[0].backgroundColor = '#842727';
+        graphConfig.data.datasets[0].borderColor = '#842727';
+        myChart.update();
+        myChart.update();
+    }
+})
+ graphControlPanel.children[5].addEventListener('click', function(){
+    if (!this.hasAttribute('active')) {
+        graphConfig.data.datasets[0].data = selectedCountryRecoveredCummulative;
+        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].label = 'Total Recovered';
+        graphConfig.data.datasets[0].backgroundColor = '#1b481b';
+        graphConfig.data.datasets[0].borderColor = '#1b481b'; 
+        myChart.update();
+        myChart.update();
+    }
+})
+
+
+// export default summarySelectedCountryData;
