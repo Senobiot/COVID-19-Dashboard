@@ -1,8 +1,5 @@
-//import getTotalData from './table_total';
-
-
 const graphWrapper = document.createElement('div');
-graphWrapper.classList.add('graphWrapper', 'loading');
+graphWrapper.classList.add('graphWrapper');
 
 const graph = document.createElement('canvas');
 graph.width = '100%';
@@ -66,7 +63,7 @@ const graphConfig = {
         labels: [],
         datasets: [{
             fill: false,
-            label: 'Global Month Confirmed',
+            label: 'Global Confirmed',
             data: [],
             backgroundColor: '#675d04',
             borderColor: '#675d04',
