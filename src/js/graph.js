@@ -1,5 +1,5 @@
 const graphWrapper = document.createElement('div');
-graphWrapper.classList.add('graphWrapper');
+graphWrapper.classList.add('graphWrapper', 'loading');
 
 const graph = document.createElement('canvas');
 graph.width = '100%';
@@ -63,21 +63,21 @@ const graphConfig = {
         labels: [],
         datasets: [{
             fill: false,
-            label: 'Global Confirmed',
+            label: 'Total Confirmed',
             data: [],
             backgroundColor: '#675d04',
             borderColor: '#675d04',
-            //borderWidth: 1
+            // borderWidth: 1
         }]
     },
     options: {
         title: {
             display: true,
-            text: 'Total cases in the world'
+            text: 'Global'
         },
         tooltips: {
             callbacks: {
-                label: function(tooltipItem, data) {
+                label(tooltipItem, data) {
                     return tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 },
             },

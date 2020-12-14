@@ -1,5 +1,4 @@
-import {myChart, graphConfig, graphControlPanel, graphWrapper} from './graph_1';
-import getTotalData from './table_total';
+import {myChart, graphConfig, graphControlPanel, graphWrapper} from './graph';
 
 const countriesModule = document.createElement('div');
 countriesModule.classList.add('countriesModule');
@@ -47,108 +46,55 @@ countriesModule.appendChild(countriesList);
 
 document.body.appendChild(countriesModule);
 
-// -----------------------filter field logic -----------------------------------
-
-let searchFieldArray; //тут для сортировки, когда ввели в поиске что-то
-searchField.addEventListener("input", function (event) {
-    searchFieldArray = {'Countries' : []};
-    let searchString = event.target.value; 
-    let options = countriesList.childNodes; 
-    for (let i = 0; i < options.length; i++) {
-        let regex = new RegExp("^" + searchString, "i");
-        let match =  options[i].children[1].textContent.match(regex);
-
-        if (!match ) {
-            options[i].style.display = 'none';
-            options[i].setAttribute('filtered', 'yes');
-        } else {
-            if (searchString) {
-                let obj = summaryData.Countries.find(element => element.Country === options[i].children[1].textContent);
-                searchFieldArray.Countries.push(obj);
-            }
-            options[i].removeAttribute('filtered');
-            options[i].style.display = 'block';
-        }
-    }
-});
 
 // -------------------get countries list and data ----------------------------------
-let summaryData; 
+
+let countryNamesArray = [];
+let globalDates = [];
 let globalConfirmedCummulative = [];
 let globalDeathsCummulative = [];
 let globalRecoveredCummulative = [];
-let globalConfirmedDay = [];
-let globalDeathsDay = [];
-let globalRecoveredDay = [];
-let currentSlug = 'global';
-let currentCountry = 'global';
+const globalConfirmedDay = [];
+const globalDeathsDay = [];
+const globalRecoveredDay = [];
+let currentCountry = false;
 let selectedCountryDates = [];
 let selectedCountryConfirmedCummulative = [];
 let selectedCountryDeathsCummulative = [];
 let selectedCountryRecoveredCummulative = [];
-let selectedCountryActive = [];
+const selectedCountryActive = [];
 let selectedCountryConfirmedDay = [];
 let selectedCountryDeathsDay = [];
 let selectedCountryRecoveredDay = [];
 
-// тут объект вида {Countries: [192x{массив с 192 объектами стран}], Date: 'дата последних данных',
-// Global {NewConfirmed: 668755, TotalConfirmed: 68884181, NewDeaths: 12540, TotalDeaths: 1569277, NewRecovered: 425817} }
-
-//let countryFlagsAndPopulationData; // !!!! МОЖЕТ НЕ ПОНАДОБИТЬСЯтут объект вида [{flag: "https://restcountries.eu/data/afg.svg", name: "Afghanistan", population: 27657145}x255, ..]
-
-// (async function getCountryFlagsAndPopulation() {
-// const response = await fetch(`https://restcountries.eu/rest/v2/all?fields=name;population;flag`)
-// const data  = await response.json();
-// countryFlagsAndPopulationData = data;
-// console.log(getCountryFlagsAndPopulation)
-// })();
-
-
-// async function getAllCountries() { НАДО!!!!
-//     const response = await fetch(`https://api.covid19api.com/summary`)
-//     const data  = await response.json();
-//     summaryData = data;
-//     console.log(data)
-//     return data;    
-// };
-
-
-
-(async function getTotalData() {
-    const response = await fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=all');
-    const data  = await response.json();
-    
-
-
-    let globalConfirmedCummulative = [];
-let globalDeathsCummulative = [];
-let globalRecoveredCummulative = [];
-let globalConfirmedDay = [];
-let globalDeathsDay = [];
-let globalRecoveredDay = [];
-    // for (let index = 0; index < array.length; index++) {
-    //     const element = array[index];
-        
-    // }
-
-    // graphConfig.data.datasets[0].data = selectedCountryRecoveredCummulative;
-    // graphConfig.options.title.text = currentCountry;
-    // graphConfig.data.datasets[0].label = 'Total Recovered';
-    // graphConfig.data.datasets[0].backgroundColor = '#1b481b';
-    // graphConfig.data.datasets[0].borderColor = '#1b481b'; 
-    // myChart.update();
-    // myChart.update();
-
-})()
-
-
-
 (async function countries () {
-    // summaryData = await getTotalData();
-    summaryData = (await getTotalData()).default; //убрать
-    console.log(summaryData.default)  //убрать
 
-    for (let index = 0; index < summaryData.Countries.length; index++) {
+    const responseFirst  = await fetch(`https://disease.sh/v3/covid-19/historical/all?lastdays=all`)
+    const globalCummulativeArray  = await responseFirst.json();
+
+        globalDates = Object.keys(globalCummulativeArray.cases);
+        globalConfirmedCummulative = Object.values(globalCummulativeArray.cases);
+        globalDeathsCummulative = Object.values(globalCummulativeArray.deaths);
+        globalRecoveredCummulative = Object.values(globalCummulativeArray.recovered);
+  
+        for (let idx = 0; idx < globalDates.length; idx++) {
+            if (idx === 0) {
+                globalConfirmedDay.push(globalConfirmedCummulative[idx]);
+                globalDeathsDay.push(globalDeathsCummulative[idx]);
+                globalRecoveredDay.push(globalRecoveredCummulative[idx]);
+            }
+            else {
+                globalConfirmedDay.push(globalConfirmedCummulative[idx] - globalConfirmedCummulative[idx - 1]);
+                globalDeathsDay.push(globalDeathsCummulative[idx] - globalDeathsCummulative[idx - 1]);
+                globalRecoveredDay.push(globalRecoveredCummulative[idx] - globalRecoveredCummulative[idx - 1]);
+            }
+        }
+
+        const responseSecond  = await fetch(`https://disease.sh/v3/covid-19/countries?yesterday=false&twoDaysAgo=false`);
+        countryNamesArray  = await responseSecond.json();
+     
+    for (let index = 0; index < countryNamesArray.length; index++) {
+
         const option = document.createElement('div');
         option.classList.add('country');
         const spanValaue = document.createElement('span');
@@ -157,73 +103,97 @@ let globalRecoveredDay = [];
         spanValaue.classList.add('optionValue');
         spanCountryName.classList.add('optionCountryName');
 
-        spanValaue.textContent = String(summaryData.Countries[index].TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-        spanCountryName.textContent = summaryData.Countries[index].Country;
-        option.setAttribute('Slug', summaryData.Countries[index].Slug);
+        spanValaue.textContent = String(countryNamesArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+        spanCountryName.textContent = countryNamesArray[index].country;
+        option.setAttribute('iso2', `${countryNamesArray[index].countryInfo.iso2}`);
+        option.setAttribute('iso3', `${countryNamesArray[index].countryInfo.iso3}`);
+        option.setAttribute('lat', `${countryNamesArray[index].countryInfo.lat}`);
+        option.setAttribute('long', `${countryNamesArray[index].countryInfo.long}`);
        
         option.appendChild(spanValaue);
         option.appendChild(spanCountryName);
       
-        option.style.backgroundImage = `url( https://www.countryflags.io/${summaryData.Countries[index].CountryCode}/shiny/64.png)`;
+        if (countryNamesArray[index].countryInfo.iso2 !== null) {
+            option.style.backgroundImage = `url( https://www.countryflags.io/${countryNamesArray[index].countryInfo.iso2}/shiny/64.png)`
+        } else {
+            option.style.backgroundImage = `https://disease.sh/assets/img/flags/unknown.png`
+            }
 
         option.addEventListener('click', async function getTotalCountryData() {
-                
-                    const response = await fetch(`https://api.covid19api.com/total/dayone/country/${this.getAttribute('Slug')}`);
+                    graphWrapper.classList.add('loading');
+                    const response = await fetch(`https://disease.sh/v3/covid-19/historical/${this.getAttribute('iso3')}?lastdays=all`);
                     const data  = await response.json();
-                    if (currentSlug !== this.getAttribute('Slug')) {
-                        currentSlug = this.getAttribute('Slug');
+                    
+                    if (currentCountry !== this.children[1].textContent) {
                         currentCountry = this.children[1].textContent;
                         selectedCountryDates = [];
                         selectedCountryConfirmedCummulative = [];
                         selectedCountryDeathsCummulative = [];
                         selectedCountryRecoveredCummulative = [];
-                        selectedCountryActive = [];
+  
                         selectedCountryConfirmedDay = [];
                         selectedCountryDeathsDay = [];
                         selectedCountryRecoveredDay = [];
 
-                        for (let index = 0; index < data.length; index++) {
-                            selectedCountryDates.push(data[index].Date.replace(/2020-/, '' ).replace(/T.*/, ''));
-                            if (currentSlug === 'china' && index === 232) {
-                                selectedCountryConfirmedCummulative.push(90127);
-                            } else {
-                                selectedCountryConfirmedCummulative.push(data[index].Confirmed);
-                            }
-                            selectedCountryDeathsCummulative.push(data[index].Deaths);
-                            selectedCountryRecoveredCummulative.push(data[index].Recovered);
-                            selectedCountryActive.push(data[index].Active);
+                        selectedCountryDates = Object.keys(data.timeline.cases);
+                        selectedCountryConfirmedCummulative = Object.values(data.timeline.cases);
+                        selectedCountryDeathsCummulative = Object.values(data.timeline.deaths);
+                        selectedCountryRecoveredCummulative = Object.values(data.timeline.recovered);
 
-                            if (index > 0) {
-                                let confirmedCalc = data[index].Confirmed - (data[index - 1].Confirmed);
-                                if (currentSlug === 'china' && index === 232) {
-                                    selectedCountryConfirmedDay.push(27);
-                                } else {
-                                     selectedCountryConfirmedDay.push(confirmedCalc >= 0 ? confirmedCalc : 0);
-                                }  
-                                let confirmedDeaths = data[index].Deaths - (data[index - 1].Deaths);
-                                let recoverCalc = data[index].Recovered - (data[index - 1].Recovered);       
-                                selectedCountryDeathsDay.push(confirmedDeaths >= 0 ? confirmedDeaths : 0);
-                                selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);                          
+                        for (let idx = 0; idx < selectedCountryDates.length; idx++) {                   
+
+                            if (idx > 0) {
+                                const confirmedCalc = selectedCountryConfirmedCummulative[idx] - selectedCountryConfirmedCummulative[idx - 1];
+                                    selectedCountryConfirmedDay.push(confirmedCalc >= 0 ? confirmedCalc : 0);
+                                const deathsCalc = selectedCountryDeathsCummulative[idx] - selectedCountryDeathsCummulative[idx - 1];
+                                    selectedCountryDeathsDay.push(deathsCalc >= 0 ? deathsCalc : 0);
+                                const recoverCalc = selectedCountryRecoveredCummulative[idx] - selectedCountryRecoveredCummulative[idx - 1];       
+                                    selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);                          
                             } 
                             else {
-                                selectedCountryConfirmedDay.push(data[index].Confirmed);
-                                selectedCountryDeathsDay.push(data[index].Deaths);
-                                selectedCountryRecoveredDay.push(data[index].Recovered);
+                                selectedCountryConfirmedDay.push(selectedCountryConfirmedCummulative[idx]);
+                                selectedCountryDeathsDay.push(selectedCountryDeathsCummulative[idx]);
+                                selectedCountryRecoveredDay.push(selectedCountryRecoveredCummulative[idx]);
                             }     
+                        }
+                        dataToGraph(selectedCountryDates, selectedCountryConfirmedCummulative);
+                        graphWrapper.classList.remove('loading');
                     }
-                    countryDataToGraph();
-                    }
-                return data; 
-            });
-
+            })
         countriesList.appendChild(option);  
     }
+    dataToGraph(globalDates, globalConfirmedCummulative);
+    graphWrapper.classList.remove('loading');
 })()
 
+// -----------------------filter field logic -----------------------------------
 
-function sortCountriesList (sortedValue, sortReverse, originalArray = summaryData) {
+let searchFieldArray; // тут для сортировки, когда ввели в поиске что-то
+searchField.addEventListener("input", function (event) {
+    searchFieldArray = [];
+    const searchString = event.target.value; 
+    const options = countriesList.childNodes; 
+    for (let i = 0; i < options.length; i++) {
+        const regex = new RegExp(`^${  searchString}`, "i");
+        const match =  options[i].children[1].textContent.match(regex);
+
+        if (!match ) {
+            options[i].style.display = 'none';
+            options[i].setAttribute('filtered', 'yes');
+        } else {
+            if (searchString) {
+                const obj = countryNamesArray.find(element => element.country === options[i].children[1].textContent);
+                searchFieldArray.push(obj);
+            }
+            options[i].removeAttribute('filtered');
+            options[i].style.display = 'block';
+        }
+    }
+});
+
+function sortCountriesList(sortedValue, sortReverse, originalArray = countryNamesArray) {
     if (!sortReverse) {
-        originalArray.Countries.sort(function (a,b) {
+        originalArray.sort(function (a,b) {
         if ( a[sortedValue] > b[sortedValue] ){
           return -1;
         }
@@ -233,7 +203,7 @@ function sortCountriesList (sortedValue, sortReverse, originalArray = summaryDat
         return 0;
       });
     } else {
-        originalArray.Countries.sort(function (a,b) {
+        originalArray.sort(function (a,b) {
             if ( a[sortedValue] < b[sortedValue] ){
               return -1;
             }
@@ -244,26 +214,25 @@ function sortCountriesList (sortedValue, sortReverse, originalArray = summaryDat
           });
     }
 
-    const countriesListNodes = originalArray.Countries.length < 50 ? document.querySelectorAll('.country:not([filtered])') : document.querySelectorAll('.country');
+    const countriesListNodes = originalArray.length < 50 ? document.querySelectorAll('.country:not([filtered])') : document.querySelectorAll('.country');
     for (let index = 0; index < countriesListNodes.length; index++) {
 
-        if (sortedValue !== 'Country') {
-            countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index][sortedValue]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-        }  else {
-            if (sortCountryListBtns.children[2].hasAttribute('sorted')) {
-                countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index].TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+        if (sortedValue !== 'country') {
+            countriesListNodes[index].children[0].textContent = String(originalArray[index][sortedValue]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+        }  else if (sortCountryListBtns.children[2].hasAttribute('sorted')) {
+                countriesListNodes[index].children[0].textContent = String(originalArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
             }   else if (sortCountryListBtns.children[3].hasAttribute('sorted')) {
-                countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index].TotalDeaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+                countriesListNodes[index].children[0].textContent = String(originalArray[index].deaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
             }   else if (sortCountryListBtns.children[4].hasAttribute('sorted')) {
-                countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index].TotalRecovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+                countriesListNodes[index].children[0].textContent = String(originalArray[index].recovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
             }   
                 else {
-                countriesListNodes[index].children[0].textContent = String(originalArray.Countries[index].TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+                countriesListNodes[index].children[0].textContent = String(originalArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
             }
-        }
-        countriesListNodes[index].setAttribute('Slug', originalArray.Countries[index].Slug);
-        countriesListNodes[index].children[1].textContent = originalArray.Countries[index].Country;
-        countriesListNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${originalArray.Countries[index].CountryCode}/shiny/64.png)`;
+        countriesListNodes[index].setAttribute('iso2', originalArray[index].countryInfo.iso2);
+        countriesListNodes[index].setAttribute('iso3', originalArray[index].countryInfo.iso3);
+        countriesListNodes[index].children[1].textContent = originalArray[index].country;
+        countriesListNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${originalArray[index].countryInfo.iso2}/shiny/64.png)`;
     }
 }
 
@@ -285,24 +254,24 @@ countryBtn.addEventListener('click', function() {
         if (this.getAttribute('sorted') === 'forward') {
             this.setAttribute('sorted', 'reverse');
             if (searchField.value) {
-                sortCountriesList('Country', true, searchFieldArray);
+                sortCountriesList('country', true, searchFieldArray);
             } else {
-                sortCountriesList('Country', true);
+                sortCountriesList('country', true);
             }
         } else {
             this.setAttribute('sorted', 'forward');
             if (searchField.value) {
-                sortCountriesList('Country', false, searchFieldArray);
+                sortCountriesList('country', false, searchFieldArray);
             } else {
-                sortCountriesList('Country');
+                sortCountriesList('country');
             }      
         }
     } else {
         this.setAttribute('sorted', 'forward');
         if (searchField.value) {
-            sortCountriesList('Country', false, searchFieldArray);
+            sortCountriesList('country', false, searchFieldArray);
         } else {
-            sortCountriesList('Country');
+            sortCountriesList('country');
         }   
     }
 })
@@ -314,26 +283,26 @@ confirmedBtn.addEventListener('click', function() {
             disactiveSortBtns();
             this.setAttribute('sorted', 'reverse');
             if (searchField.value) {
-                sortCountriesList('TotalConfirmed', true, searchFieldArray);
+                sortCountriesList('cases', true, searchFieldArray);
             } else {
-                sortCountriesList('TotalConfirmed', true);
+                sortCountriesList('cases', true);
             }
         } else {
             disactiveSortBtns();
             this.setAttribute('sorted', 'forward');
             if (searchField.value) {
-                sortCountriesList('TotalConfirmed', false, searchFieldArray);
+                sortCountriesList('cases', false, searchFieldArray);
             } else {
-                sortCountriesList('TotalConfirmed');
+                sortCountriesList('cases');
             }      
         }
     } else {
         disactiveSortBtns();
         this.setAttribute('sorted', 'forward');
         if (searchField.value) {
-            sortCountriesList('TotalConfirmed', false, searchFieldArray);
+            sortCountriesList('cases', false, searchFieldArray);
         } else {
-            sortCountriesList('TotalConfirmed');
+            sortCountriesList('cases');
         }   
     }
 })
@@ -344,26 +313,26 @@ deathBtn.addEventListener('click', function() {
             disactiveSortBtns();
             this.setAttribute('sorted', 'reverse');
             if (searchField.value) {
-                sortCountriesList('TotalDeaths', true, searchFieldArray);
+                sortCountriesList('deaths', true, searchFieldArray);
             } else {
-                sortCountriesList('TotalDeaths', true);
+                sortCountriesList('deaths', true);
             }
         } else {
             disactiveSortBtns();
             this.setAttribute('sorted', 'forward')
             if (searchField.value) {
-                sortCountriesList('TotalDeaths', false, searchFieldArray);
+                sortCountriesList('deaths', false, searchFieldArray);
             } else {
-                sortCountriesList('TotalDeaths');
+                sortCountriesList('deaths');
             } 
         }
     } else {
         disactiveSortBtns();
         this.setAttribute('sorted', 'forward');
         if (searchField.value) {
-            sortCountriesList('TotalDeaths', false, searchFieldArray);
+            sortCountriesList('deaths', false, searchFieldArray);
         } else {
-            sortCountriesList('TotalDeaths');
+            sortCountriesList('deaths');
         }   
     }
 })
@@ -374,36 +343,36 @@ recoverBtn.addEventListener('click', function() {
             disactiveSortBtns();
             this.setAttribute('sorted', 'reverse');
             if (searchField.value) {
-                sortCountriesList('TotalRecovered', true, searchFieldArray);
+                sortCountriesList('recovered', true, searchFieldArray);
             } else {
-                sortCountriesList('TotalRecovered', true);
+                sortCountriesList('recovered', true);
             }
         } else {
             disactiveSortBtns();
             this.setAttribute('sorted', 'forward')
             if (searchField.value) {
-                sortCountriesList('TotalRecovered', false, searchFieldArray);
+                sortCountriesList('recovered', false, searchFieldArray);
             } else {
-                sortCountriesList('TotalRecovered');
+                sortCountriesList('recovered');
             } 
         }
     } else {
         disactiveSortBtns();
         this.setAttribute('sorted', 'forward');
         if (searchField.value) {
-            sortCountriesList('TotalRecovered', false, searchFieldArray);
+            sortCountriesList('recovered', false, searchFieldArray);
         } else {
-            sortCountriesList('TotalRecovered');
+            sortCountriesList('recovered');
         }  
     }
 })
 
-function countryDataToGraph(dataType = selectedCountryConfirmedCummulative) {
-    graphConfig.data.labels = selectedCountryDates;
+function dataToGraph(datesArr, dataType) {
+    graphConfig.data.labels = datesArr;
     graphConfig.data.datasets[0].data = dataType;
     graphConfig.data.datasets[0].backgroundColor = '#675d04';
     graphConfig.data.datasets[0].borderColor = '#675d04';
-    graphConfig.options.title.text = currentCountry;
+    graphConfig.options.title.text = currentCountry || 'Global';
     graphConfig.data.datasets[0].label = 'Total Confirmed';
     graphWrapper.classList.remove('loading');
     myChart.update();
@@ -412,11 +381,11 @@ function countryDataToGraph(dataType = selectedCountryConfirmedCummulative) {
 
 graphControlPanel.children[0].addEventListener('click', function(){
     if (!this.hasAttribute('active')) {
-        graphConfig.data.datasets[0].data = selectedCountryConfirmedDay;
-        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].data = currentCountry ? selectedCountryConfirmedDay: globalConfirmedDay;
+        graphConfig.options.title.text = currentCountry || 'Global' ;
         graphConfig.data.datasets[0].label = 'Confirmed Per Day';
         graphConfig.data.datasets[0].backgroundColor = '#675d04';
-        graphConfig.data.datasets[0].borderColor = '#675d04';
+        graphConfig.data.datasets[0].borderColor = '#675d04'; 
         myChart.update();
         myChart.update();
     }
@@ -425,8 +394,8 @@ graphControlPanel.children[0].addEventListener('click', function(){
 
 graphControlPanel.children[1].addEventListener('click', function(){
     if (!this.hasAttribute('active')) {
-        graphConfig.data.datasets[0].data = selectedCountryDeathsDay;
-        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].data = currentCountry ? selectedCountryDeathsDay: globalDeathsDay;
+        graphConfig.options.title.text = currentCountry || 'Global';
         graphConfig.data.datasets[0].label = 'Deaths Per Day';
         graphConfig.data.datasets[0].backgroundColor = '#842727';
         graphConfig.data.datasets[0].borderColor = '#842727';
@@ -437,8 +406,8 @@ graphControlPanel.children[1].addEventListener('click', function(){
 
 graphControlPanel.children[2].addEventListener('click', function(){
     if (!this.hasAttribute('active')) {
-        graphConfig.data.datasets[0].data = selectedCountryRecoveredDay;
-        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].data = currentCountry ? selectedCountryRecoveredDay: globalRecoveredDay;
+        graphConfig.options.title.text = currentCountry || 'Global';
         graphConfig.data.datasets[0].label = 'Recovered Per Day';
         graphConfig.data.datasets[0].backgroundColor = '#1b481b'; 
         graphConfig.data.datasets[0].borderColor = '#1b481b';
@@ -449,8 +418,8 @@ graphControlPanel.children[2].addEventListener('click', function(){
 
 graphControlPanel.children[3].addEventListener('click', function(){
     if (!this.hasAttribute('active')) {
-        graphConfig.data.datasets[0].data = selectedCountryConfirmedCummulative;
-        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].data = currentCountry ? selectedCountryConfirmedCummulative : globalConfirmedCummulative;
+        graphConfig.options.title.text = currentCountry || 'Global';
         graphConfig.data.datasets[0].label = 'Total Confirmed';
         graphConfig.data.datasets[0].backgroundColor = '#675d04';
         graphConfig.data.datasets[0].borderColor = '#675d04';
@@ -461,8 +430,8 @@ graphControlPanel.children[3].addEventListener('click', function(){
 })
 graphControlPanel.children[4].addEventListener('click', function(){
     if (!this.hasAttribute('active')) {
-        graphConfig.data.datasets[0].data = selectedCountryDeathsCummulative;
-        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].data = currentCountry ? selectedCountryDeathsCummulative: globalDeathsCummulative;
+        graphConfig.options.title.text = currentCountry || 'Global';
         graphConfig.data.datasets[0].label = 'Total Deaths';
         graphConfig.data.datasets[0].backgroundColor = '#842727';
         graphConfig.data.datasets[0].borderColor = '#842727';
@@ -472,8 +441,8 @@ graphControlPanel.children[4].addEventListener('click', function(){
 })
  graphControlPanel.children[5].addEventListener('click', function(){
     if (!this.hasAttribute('active')) {
-        graphConfig.data.datasets[0].data = selectedCountryRecoveredCummulative;
-        graphConfig.options.title.text = currentCountry;
+        graphConfig.data.datasets[0].data = currentCountry ? selectedCountryRecoveredCummulative : globalRecoveredCummulative;
+        graphConfig.options.title.text = currentCountry || 'Global';
         graphConfig.data.datasets[0].label = 'Total Recovered';
         graphConfig.data.datasets[0].backgroundColor = '#1b481b';
         graphConfig.data.datasets[0].borderColor = '#1b481b'; 
@@ -481,6 +450,5 @@ graphControlPanel.children[4].addEventListener('click', function(){
         myChart.update();
     }
 })
-
 
 // export default summarySelectedCountryData;

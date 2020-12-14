@@ -1,5 +1,3 @@
-import * as data from './summary.json';
-
 const tableTotalWrapper = document.createElement('div');
 tableTotalWrapper.classList.add('tableTotalWrapper');
 
@@ -51,24 +49,17 @@ tableTotalCasesTitle.textContent = "global confirmed";
 tableTotalDeathsTitle.textContent = "global deaths";
 tableTotalRecoveredTitle.textContent = 'global recovered';
 
-// async function getTotalData() {
-//     const response = await fetch(`https://api.covid19api.com/summary`)
-//     const data  = await response.json();
-//     tableTotalDate.textContent = (new Date(Date.parse(data.Date))).toUTCString();
-//     tableTotalCasesCounter.textContent = String(data.Global.TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//     tableTotalDeathsCounter.textContent = String(data.Global.TotalDeaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//     tableTotalRecoveredCounter.textContent = String(data.Global.TotalRecovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//     return data; 
-// };
+(async function getTotalData() {
+    const response = await fetch(`https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false`)
+    const todayData  = await response.json();
+    const upDate = new Date(todayData.updated)
+    tableTotalDate.textContent = upDate.toString().replace(/GMT.*/, '');
 
-async function getTotalData() {
+    tableTotalCasesCounter.textContent = String(todayData.cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+    tableTotalDeathsCounter.textContent = String(todayData.deaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+    tableTotalRecoveredCounter.textContent = String(todayData.recovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+})();
 
-    tableTotalDate.textContent = (new Date(Date.parse(data.Date))).toUTCString();
-    tableTotalCasesCounter.textContent = String(data.Global.TotalConfirmed).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-    tableTotalDeathsCounter.textContent = String(data.Global.TotalDeaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-    tableTotalRecoveredCounter.textContent = String(data.Global.TotalRecovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-    return data; 
-};
 
 tableTotalWrapper.appendChild(tableTotalDateWrapper);
 tableTotalWrapper.appendChild(tableTotalCases);
@@ -76,5 +67,3 @@ tableTotalWrapper.appendChild(tableTotalDeaths);
 tableTotalWrapper.appendChild(tableTotalRecovered);
 
 document.body.appendChild(tableTotalWrapper);
-
-export default getTotalData;
