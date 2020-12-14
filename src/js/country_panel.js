@@ -168,7 +168,6 @@ let excludeCountries = ['AIA', 'ABW', 'BMU', 'VGB', 'BES', 'JEY', 'CUW', null, '
             })
         countriesList.appendChild(option);  
     }
-    console.log(countriesList.length)
     dataToGraph(globalDates, globalConfirmedCummulative);
     graphWrapper.classList.remove('loading');
 })()
