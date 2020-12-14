@@ -66,6 +66,8 @@ const selectedCountryActive = [];
 let selectedCountryConfirmedDay = [];
 let selectedCountryDeathsDay = [];
 let selectedCountryRecoveredDay = [];
+let excludeCountries = ['AIA', 'ABW', 'BMU', 'VGB', 'BES', 'JEY', 'CUW', null, 'FLK', 'FRO' , 'GUF', 'PYF', 'GIB',
+ 'GRL', 'GLP', 'VAT', 'HKG', 'IMN', 'MAC', 'MTQ', 'MYT', 'MSR', 'MMR', 'NCL', 'PSE', 'REU', 'MAF', 'SPM', 'SXM', 'BLM', 'TCA', 'WLF', 'ESH'];
 
 (async function countries () {
 
@@ -94,7 +96,9 @@ let selectedCountryRecoveredDay = [];
         countryNamesArray  = await responseSecond.json();
      
     for (let index = 0; index < countryNamesArray.length; index++) {
-
+        if (excludeCountries.indexOf(countryNamesArray[index].countryInfo.iso3) !== - 1) {
+            continue;
+        }
         const option = document.createElement('div');
         option.classList.add('country');
         const spanValaue = document.createElement('span');
@@ -120,11 +124,12 @@ let selectedCountryRecoveredDay = [];
             }
 
         option.addEventListener('click', async function getTotalCountryData() {
-                    graphWrapper.classList.add('loading');
+                    
                     const response = await fetch(`https://disease.sh/v3/covid-19/historical/${this.getAttribute('iso3')}?lastdays=all`);
                     const data  = await response.json();
                     
                     if (currentCountry !== this.children[1].textContent) {
+                        graphWrapper.classList.add('loading');
                         currentCountry = this.children[1].textContent;
                         selectedCountryDates = [];
                         selectedCountryConfirmedCummulative = [];
@@ -148,7 +153,8 @@ let selectedCountryRecoveredDay = [];
                                 const deathsCalc = selectedCountryDeathsCummulative[idx] - selectedCountryDeathsCummulative[idx - 1];
                                     selectedCountryDeathsDay.push(deathsCalc >= 0 ? deathsCalc : 0);
                                 const recoverCalc = selectedCountryRecoveredCummulative[idx] - selectedCountryRecoveredCummulative[idx - 1];       
-                                    selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);                          
+                                    selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);  
+                
                             } 
                             else {
                                 selectedCountryConfirmedDay.push(selectedCountryConfirmedCummulative[idx]);
@@ -162,6 +168,7 @@ let selectedCountryRecoveredDay = [];
             })
         countriesList.appendChild(option);  
     }
+    console.log(countriesList.length)
     dataToGraph(globalDates, globalConfirmedCummulative);
     graphWrapper.classList.remove('loading');
 })()
