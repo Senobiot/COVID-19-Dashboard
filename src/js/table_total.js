@@ -107,6 +107,8 @@ tableTotalDailyDeathsTitle.textContent = "today deaths :";
 tableTotalDailyRecoveredTitle.textContent = 'today recovered :';
 tableTotalDailyTestsTitle.textContent = 'tests per million :';
 
+const fullScreenBtn = document.createElement('div');
+fullScreenBtn.classList.add('fullScreenTotalTable');
 
 let casesCache;
 let deatsCache;
@@ -121,7 +123,6 @@ let population;
 (async function getTotalData() {
     const response = await fetch(`https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false`);
     const todayData  = await response.json();
-    console.log(todayData)
     const upDate = new Date(todayData.updated)
     tableTotalDate.textContent = upDate.toString().replace(/GMT.*/, '');
 
@@ -146,9 +147,6 @@ let population;
 
 })();
 
-
-
-
 tableTotalInfoWrapper.appendChild(tableTotalCases);
 tableTotalInfoWrapper.appendChild(tableTotalDeaths);
 tableTotalInfoWrapper.appendChild(tableTotalRecovered);
@@ -164,8 +162,9 @@ tableTotalWrapper.appendChild(tableTotalInfoWrapper);
 tableTotalWrapper.appendChild(tableTotalInfoWrapperReverse);
 tableTotalWrapper.appendChild(tableTotalDailyInfoBtn);
 tableTotalWrapper.appendChild(tableTotalAddInfoBtn);
+tableTotalWrapper.appendChild(fullScreenBtn);
 
-tableTotalAddInfoBtn.addEventListener('click', function () {
+tableTotalAddInfoBtn.addEventListener('click', function clickTableTotalAddInfoBtn() {
     if(this.classList.contains('active')) {
         this.classList.remove('active');
         tableTotalInfoWrapper.classList.remove('rotated');
@@ -219,7 +218,7 @@ tableTotalAddInfoBtn.addEventListener('click', function () {
     }
 })
 
-tableTotalDailyInfoBtn.addEventListener('click', function () {
+tableTotalDailyInfoBtn.addEventListener('click', function clickTableTotalDailyInfoBtn() {
     if(this.classList.contains('active')) {
         this.classList.remove('active');
         tableTotalInfoWrapper.classList.remove('rotated');
@@ -257,5 +256,8 @@ tableTotalDailyInfoBtn.addEventListener('click', function () {
     }
 })
 
+fullScreenBtn.addEventListener('click', function clickFullScreenBtn(){
+  tableTotalWrapper.classList.toggle('fullScreen');
+})
 
 document.body.appendChild(tableTotalWrapper);

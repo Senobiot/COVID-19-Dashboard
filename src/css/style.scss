@@ -12,6 +12,7 @@ body {
     // grid-row-gap: 5px;
     position: relative;
     font-family: $font_2;
+    overflow: hidden;
     &:after {
         content: '';
         position: absolute;

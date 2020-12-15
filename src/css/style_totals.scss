@@ -15,6 +15,15 @@
     //     background-color: rgba(35,35,3, 0.1);
     // }
     perspective: 1000px;
+    &.fullScreen {
+        width: 100%;
+        height: 91%;
+        z-index: 50;
+        font-size: 48px;
+        background-color: #b3b8ab;   
+
+    }
+    transition: 0.5s;
     h2, h3, .tableTotalDailyInfoBtn, .tableTotalAddInfoBtn  {
         color: rgba(0,0,0,0.6);
         text-shadow: 2px 2px 3px rgba(255,255,255,0.1);
@@ -28,8 +37,8 @@
         content: '';
         position: absolute;
         top: 0;
-        width: 50%;
-        left: 25%;
+        width: 100%;
+        left: 0;
         height: 2px;
         background-color: rgba(0,0,0,0.6);;
     }
@@ -62,8 +71,8 @@
         writing-mode: vertical-lr;
         text-orientation: upright;
         padding-left: 0.5em;
-        font-size: 1em;
-        width: 15%;
+        font-size: 24px;
+        width: 60px;
         height: 50%;
         color: rgba(0,0,0,0.6);
         text-shadow: 2px 2px 3px rgba(255,255,255,0.1);
@@ -71,7 +80,7 @@
         background-color: rgba(35,35,3, 0.2);
         border-radius: 0 5px 5px 0;
         cursor: pointer;
-        transition: 0.3s;
+        transition: 0.1s;
         &:hover{
             background-color: #fff;
             box-shadow: inset 60px 0 10px;
@@ -88,13 +97,15 @@
             right: 0;
         }
     .tableTotalInfoWrapper, .tableTotalInfoWrapperReverse {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         backface-visibility: hidden;
         position: absolute;
         width: 100%;
-        height: 100%;
-        top: 3em;
+        top: 22%;
         z-index: 2;
-        transition: 1s;
+        transition: transform 1s;
         &.rotated {
             transform: rotateY(180deg);
             z-index: 1;
@@ -107,6 +118,22 @@
         &.rotated {
             z-index: 2;
             transform: rotateY(360deg);
+        }
+    }
+    .fullScreenTotalTable {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        background: url('../img/fullscreen.png') 50%/cover no-repeat;
+        transition: 1s;
+        @keyframes fullscreenBtnAnimation {
+            50%{transform : scale(0.6)}
+        }
+        &:hover {
+            animation: fullscreenBtnAnimation 1s linear infinite;
         }
     }
 }
