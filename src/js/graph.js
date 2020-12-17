@@ -1,98 +1,4 @@
-const graphWrapper = document.createElement('div');
-graphWrapper.classList.add('graphWrapper', 'loading');
-
-const graph = document.createElement('canvas');
-graph.width = '100%';
-graph.height = 'auto';
-graph.id = 'myChart';
-
-const graphControlPanel = document.createElement('div');
-graphControlPanel.classList.add('graphControlPanel');
-
-const graphControlPanelTypeBtn =  document.createElement('input');
-graphControlPanelTypeBtn.type = "checkbox";
-graphControlPanelTypeBtn.classList.add('graphSwitcherType');
-
-const graphControlPanelDataBtn =  document.createElement('input');
-graphControlPanelDataBtn.type = "checkbox";
-graphControlPanelDataBtn.classList.add('graphSwitcherData');
-
-const graphControlPanelCaseBtn1 =  document.createElement('button');
-graphControlPanelCaseBtn1.classList.add('graphBtn', 'graphConfirmedDaily');
-graphControlPanelCaseBtn1.textContent = 'Daily Cases'
-
-const graphControlPanelCaseBtn2 =  document.createElement('button');
-graphControlPanelCaseBtn2.classList.add('graphBtn', 'graphDeathsDaily');
-graphControlPanelCaseBtn2.textContent = 'Daily Deaths';
-
-const graphControlPanelCaseBtn3 =  document.createElement('button');
-graphControlPanelCaseBtn3.classList.add('graphBtn', 'graphRecoveredDaily');
-graphControlPanelCaseBtn3.textContent = 'Daily Recovered';
-
-const graphControlPanelCaseBtn4 =  document.createElement('button');
-graphControlPanelCaseBtn4.classList.add('graphBtn', 'graphConfirmedTotal', 'active');
-graphControlPanelCaseBtn4.textContent = 'Cumulative Confirmed';
-
-const graphControlPanelCaseBtn5 =  document.createElement('button');
-graphControlPanelCaseBtn5.classList.add('graphBtn', 'graphDeathsTotal');
-graphControlPanelCaseBtn5.textContent = 'Cummulative Deaths';
-
-const graphControlPanelCaseBtn6 =  document.createElement('button');
-graphControlPanelCaseBtn6.classList.add('graphBtn', 'graphRecoveredTotal');
-graphControlPanelCaseBtn6.textContent = 'Cummulative recovered';
-
-const graphControlPanelCaseBtn7 =  document.createElement('button');
-graphControlPanelCaseBtn7.classList.add('graphBtn', 'graphConfirmedDailyPer100k', 'hidden');
-graphControlPanelCaseBtn7.textContent = 'Daily Cases per 100k';
-
-const graphControlPanelCaseBtn8 =  document.createElement('button');
-graphControlPanelCaseBtn8.classList.add('graphBtn', 'graphDeathsDailyPer100k', 'hidden');
-graphControlPanelCaseBtn8.textContent = 'Daily Deaths per 100k';
-
-const graphControlPanelCaseBtn9 =  document.createElement('button');
-graphControlPanelCaseBtn9.classList.add('graphBtn', 'graphRecoveredDailyPer100k', 'hidden');
-graphControlPanelCaseBtn9.textContent = ' daily recovered per 100k';
-
-const graphControlPanelCaseBtn10 =  document.createElement('button');
-graphControlPanelCaseBtn10.classList.add('graphBtn', 'graphConfirmedDailyPer100k', 'hidden');
-graphControlPanelCaseBtn10.textContent = 'recovered per 100k';
-
-const graphControlPanelCaseBtn11 =  document.createElement('button');
-graphControlPanelCaseBtn11.classList.add('graphBtn', 'graphConfirmedDailyPer100k', 'hidden');
-graphControlPanelCaseBtn11.textContent = 'recovered per 100k';
-
-const graphControlPanelCaseBtn12 =  document.createElement('button');
-graphControlPanelCaseBtn12.classList.add('graphBtn', 'graphConfirmedDailyPer100k', 'hidden');
-graphControlPanelCaseBtn12.textContent = 'recovered per 100k';
-
-const fullScreenBtn = document.createElement('div');
-fullScreenBtn.classList.add('fullScreenGraph');
-
-graphControlPanel.appendChild(graphControlPanelCaseBtn1);
-graphControlPanel.appendChild(graphControlPanelCaseBtn2);
-graphControlPanel.appendChild(graphControlPanelCaseBtn3);
-graphControlPanel.appendChild(graphControlPanelCaseBtn4);
-graphControlPanel.appendChild(graphControlPanelCaseBtn5);
-graphControlPanel.appendChild(graphControlPanelCaseBtn6);
-graphControlPanel.appendChild(graphControlPanelCaseBtn7);
-graphControlPanel.appendChild(graphControlPanelCaseBtn8);
-graphControlPanel.appendChild(graphControlPanelCaseBtn9);
-graphControlPanel.appendChild(graphControlPanelCaseBtn10);
-graphControlPanel.appendChild(graphControlPanelCaseBtn11);
-graphControlPanel.appendChild(graphControlPanelCaseBtn12);
-
-graphWrapper.appendChild(graph);
-graphWrapper.appendChild(graphControlPanelTypeBtn);
-graphWrapper.appendChild(graphControlPanelDataBtn);
-graphWrapper.appendChild(graphControlPanel);
-graphWrapper.appendChild(fullScreenBtn);
-
-
-document.body.appendChild(graphWrapper);
-
-const ctx = document.getElementById('myChart').getContext('2d');
-
-            const graphConfig = {
+const graphConfig = {
     type: 'bar',
     data: {
         labels: [],
@@ -130,22 +36,82 @@ const ctx = document.getElementById('myChart').getContext('2d');
     }
 }
 
-const myChart = new Chart(ctx, graphConfig);
+const graphWrapper = document.createElement('div');
+graphWrapper.classList.add('graphWrapper', 'loading');
 
-graphControlPanelTypeBtn.addEventListener('click', function clickGraphControlPanelTypeBtn(){
-    if(this.checked) {
-        graphConfig.type = 'line';
-        myChart.update();
+const graph = document.createElement('canvas');
+graph.width = '100%';
+graph.height = 'auto';
+graph.id = 'myChart';
+
+const graphControlPanel = document.createElement('div');
+graphControlPanel.classList.add('graphControlPanel');
+
+const graphControlPanelTypeBtn =  document.createElement('input');
+graphControlPanelTypeBtn.type = "checkbox";
+graphControlPanelTypeBtn.classList.add('graphSwitcherType');
+
+const graphControlPanelDataBtn =  document.createElement('input');
+graphControlPanelDataBtn.type = "checkbox";
+graphControlPanelDataBtn.classList.add('graphSwitcherData');
+
+for (let i = 1; i <= 12; i += 1) {
+    const graphControlPanelCaseBtn =  document.createElement('button');
+    graphControlPanelCaseBtn.classList.add('graphDataBtn');
+    if (i < 4 || i > 6 && i < 10) {
+        graphControlPanelCaseBtn.textContent = 'Daily';
+    }   else {
+        graphControlPanelCaseBtn.textContent = 'Summary';
+        }
+    if (i === 1 || i === 4 || i === 7 || i === 10) {
+        graphControlPanelCaseBtn.textContent += ' confirmed';
+        graphControlPanelCaseBtn.setAttribute('data-colour', '#675d04');
+    } else if (i === 2 || i === 5 || i === 8 || i === 11) {
+        graphControlPanelCaseBtn.textContent += ' deaths';
+        graphControlPanelCaseBtn.setAttribute('data-colour', '#842727');
     } else {
-        graphConfig.type = 'bar';
+        graphControlPanelCaseBtn.textContent += ' recovered';
+        graphControlPanelCaseBtn.setAttribute('data-colour', '#1b481b');
+    }
+   
+    if (i > 6) {
+        graphControlPanelCaseBtn.classList.add('hidden');
+        graphControlPanelCaseBtn.textContent += ' per 100k';
+    } 
+    graphControlPanel.appendChild(graphControlPanelCaseBtn);
+}
+
+
+function graphBtsDisactive() {
+    for (let idx = 0; idx < graphControlPanel.childNodes.length; idx += 1) {
+        graphControlPanel.children[idx].classList.remove('active');    
+    }
+} 
+
+function graphBtsEvent(changeCountry){
+  
+    if (!this.classList.contains('active') || changeCountry) {
+        graphBtsDisactive();
+        this.classList.add('active');
+        const currCountry = localStorage.getItem('currentCountry');
+
+        const dates = currCountry === 'Global' ? JSON.parse(localStorage.getItem('globalDates')) :
+        JSON.parse(localStorage.getItem('selectedCountryDates'));
+        const dataSets = currCountry === 'Global' ? JSON.parse(localStorage.getItem(`Global ${this.textContent}`)) :
+        JSON.parse(localStorage.getItem(`${this.textContent}`));
+       
+        graphConfig.data.labels = dates;
+        graphConfig.data.datasets[0].data = dataSets;
+        graphConfig.options.title.text = currCountry;
+
+        graphConfig.data.datasets[0].label = this.textContent;
+        graphConfig.data.datasets[0].backgroundColor = this.getAttribute('data-colour'); 
+        graphConfig.data.datasets[0].borderColor = this.getAttribute('data-colour');
+
+        myChart.update();
         myChart.update();
     }
-})
-
-fullScreenBtn.addEventListener('click', function clickFullScreenBtn(){
-    graphWrapper.classList.toggle('fullScreen');
-})
-
+}
 
 function graphControlPanelBtnsGroup(group) {
     if (group === 1) {
@@ -168,14 +134,50 @@ function graphControlPanelBtnsGroup(group) {
 }
 
 
-// for (let index = 0; index < graphControlPanel.childNodes.length; index += 1) {
-//         graphControlPanel.children[index].addEventListener('click', function activeBtn() {
-//             if (!this.classList.contains('active')) {
-//                 graphControlPanelDisactive();
-//                 this.classList.add('active');
-//             }
-//         });
-// }
+for (let index = 0; index < graphControlPanel.childNodes.length; index += 1) {
+    graphControlPanel.children[index].draw = graphBtsEvent;
+    graphControlPanel.children[index].addEventListener('click', graphBtsEvent);
+}
+
+const graphBtnExportEvents = function (number, changeCountry){
+    if (number < 6 && graphControlPanelDataBtn.checked) {
+        graphControlPanelDataBtn.checked = false;
+        graphControlPanelBtnsGroup(2);
+     } else if (number > 5 && !graphControlPanelDataBtn.checked) {
+        graphControlPanelBtnsGroup(1);
+        graphControlPanelDataBtn.checked = true;
+    }
+    graphControlPanel.children[number].draw(changeCountry);
+}
+
+const fullScreenBtn = document.createElement('div');
+fullScreenBtn.classList.add('fullScreenGraph');
+
+graphWrapper.appendChild(graph);
+graphWrapper.appendChild(graphControlPanelTypeBtn);
+graphWrapper.appendChild(graphControlPanelDataBtn);
+graphWrapper.appendChild(graphControlPanel);
+graphWrapper.appendChild(fullScreenBtn);
+
+document.body.appendChild(graphWrapper);
+
+const ctx = document.getElementById('myChart').getContext('2d');
+
+const myChart = new Chart(ctx, graphConfig);
+
+graphControlPanelTypeBtn.addEventListener('click', function clickGraphControlPanelTypeBtn(){
+    if(this.checked) {
+        graphConfig.type = 'line';
+        myChart.update();
+    } else {
+        graphConfig.type = 'bar';
+        myChart.update();
+    }
+})
+
+fullScreenBtn.addEventListener('click', function clickFullScreenBtn(){
+    graphWrapper.classList.toggle('fullScreen');
+})
 
 graphControlPanelDataBtn.addEventListener('click', function clickGraphControlPanelDataBtn(){
     if(this.checked) {
@@ -187,4 +189,4 @@ graphControlPanelDataBtn.addEventListener('click', function clickGraphControlPan
 
 
 
-export {myChart, graphConfig, graphControlPanel, graphWrapper};
+export {graphWrapper, graphBtnExportEvents};

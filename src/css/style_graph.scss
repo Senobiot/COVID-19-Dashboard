@@ -12,7 +12,7 @@ $font_2: 'Rubik', sans-serif;
     // position: relative; 
     position: absolute;
     width: 30%;
-    top: 9%;
+    top: calc(5% + 2px);
     left: 21%;
     height: 33%;
     box-shadow: inset 0 0 10px;
@@ -23,9 +23,9 @@ $font_2: 'Rubik', sans-serif;
     font-size: 24px;
     &.fullScreen {
         width: 100%;
-        height: 91%;
+        height: 95%;
         z-index: 50;
-        font-size: 38px;
+        font-size: 42px;
         left: 0; 
 
     }
@@ -128,17 +128,21 @@ $font_2: 'Rubik', sans-serif;
     height: 8%;
 }
 
-.graphBtn  {
+.graphDataBtn  {
     width: 20%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: dimgray;
     color: floralwhite;
-    font-size: 0.4em;
+    font-size: 0.3em;
     text-transform: uppercase;
     transition: 0.3s;
+    padding: 0 8px;
     cursor: pointer;
+    &:nth-child(6), &:nth-child(7), &:nth-child(8) {
+        padding: 0 17px;
+    } 
     &.active {
         background-color: #488f8f;
         box-shadow: inset 0 0 10px;
