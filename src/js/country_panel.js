@@ -4,17 +4,20 @@ import {graphWrapper, graphBtnExportEvents} from './graph';
 const countriesModule = document.createElement('div');
 countriesModule.classList.add('countriesModule');
 
+const fullScreenCountreisBtn = document.createElement('div');
+fullScreenCountreisBtn.classList.add('fullScreenCountreisBtn');
+
+const searchWrapper = document.createElement('div');
+searchWrapper.classList.add('searchWrapper');
 const searchField = document.createElement('input');
 searchField.type = 'search';
-searchField.placeholder = 'Find country';
+searchField.placeholder = 'Search country';
 searchField.classList.add('countriesSearchField');
+searchWrapper.appendChild(searchField);
 
-
-const filterField = document.createElement('input');
-filterField.type = 'search';
-filterField.disabled = true;
-filterField.placeholder = 'Filter country';
-filterField.classList.add('countriesSearchField');
+const countriesSearchFieldResults = document.createElement('div');
+countriesSearchFieldResults.classList.add('countriesSearchFieldResults');
+searchWrapper.appendChild(countriesSearchFieldResults);
 
 const countriesList = document.createElement('div');
 countriesList.classList.add('countriesList');
@@ -179,11 +182,10 @@ sortCountryListBtnsSwitcher.addEventListener('click', function sortCountryListBt
         sortCountryListBtnSwitcher(2);
     }
 })
-
+countriesModule.appendChild(fullScreenCountreisBtn);
 sortCountryListBtns.appendChild(sortCountryListBtnsSubWrapper);
 countriesModule.appendChild(sortCountryListBtns);
-countriesModule.appendChild(searchField);
-countriesModule.appendChild(filterField);
+countriesModule.appendChild(searchWrapper);
 countriesModule.appendChild(countriesList);
 
 document.body.appendChild(countriesModule);
@@ -434,207 +436,59 @@ function buildCountryPanel() {
 })();
 
 
+fullScreenCountreisBtn.addEventListener('click', () => {
+    countriesModule.classList.toggle('fullscreen');
+    searchWrapper.classList.toggle('fullscreen');
+    sortCountryListBtnsSubWrapper.classList.toggle('fullscreen');
+    sortCountryListBtns.classList.toggle('fullscreen');
+    countriesList.classList.toggle('fullscreen');
+    sortCountryListBtnsSwitcher.classList.toggle('fullscreen');
+})
+
 // -----------------------filter field logic -----------------------------------
 
-let searchFieldArray; 
-filterField.addEventListener("input", (event) => {
-    searchFieldArray = [];
-    const searchString = event.target.value; 
-    const options = countriesList.childNodes; 
-    for (let i = 0; i < options.length; i += 1) {
-        const regex = new RegExp(`^${  searchString}`, "i");
-        const match =  options[i].children[1].textContent.match(regex);
+// let searchFieldArray; 
+// searchField.addEventListener("input", (event) => {
+//     searchFieldArray = [];
+//     const searchString = event.target.value; 
+//     const options = countriesList.childNodes; 
+//     for (let i = 0; i < options.length; i += 1) {
+//         const regex = new RegExp(`^${  searchString}`, "i");
+//         const match =  options[i].children[1].textContent.match(regex);
+//         if (!match ) {
+//             options[i].style.display = 'none';
+//         } else {
+//             if (searchString) {
+//                 const obj = allCountriesFinalArray.find(element => element.country === options[i].children[1].textContent);
+//                 searchFieldArray.push(obj);
+//             }
+//             options[i].style.display = 'block';
+//         }
+//     }
+// });
 
-        if (!match ) {
-            options[i].style.display = 'none';
-            options[i].setAttribute('filtered', 'yes');
-        } else {
-            if (searchString) {
-                const obj = allCountriesFinalArray.find(element => element.country === options[i].children[1].textContent);
-                searchFieldArray.push(obj);
-            }
-            options[i].removeAttribute('filtered');
-            options[i].style.display = 'block';
-        }
+// let searchFieldArray; 
+searchField.addEventListener("input", (event) => { 
+    countriesSearchFieldResults.textContent = '';
+    const searchString = event.target.value; 
+    for (let i = 0; i < countriesList.childNodes.length; i += 1) {
+        const regex = new RegExp(`^${  searchString}`, "i");
+        const match =  countriesList.childNodes[i].children[1].innerText.match(regex);
+        if (match && searchField.value) {
+            let searchFieldResult = document.createElement('div');
+            searchFieldResult.classList.add('searchFieldResult');
+            searchFieldResult.innerText = countriesList.childNodes[i].children[1].innerText;
+            searchFieldResult.addEventListener('click', function serachElementClick(){
+                getCurrentCountryData.call(countriesList.childNodes[i]);
+                countriesSearchFieldResults.textContent = '';
+                searchField.value = '';
+                countriesList.childNodes[i].scrollIntoView({block: "center", behavior: "smooth"});
+            })
+            countriesSearchFieldResults.appendChild(searchFieldResult);
+            
+        } 
     }
 });
-
-// function sortCountriesList(sortedValue, sortReverse, originalArray = countryNamesArray) {
-//     if (!sortReverse) {
-//         originalArray.sort( (a,b) => {
-//         if ( a[sortedValue] > b[sortedValue] ){
-//           return -1;
-//         }
-//         if ( b[sortedValue] > a[sortedValue] ){
-//           return 1;
-//         }
-//         return 0;
-//       });
-//     } else {
-//         originalArray.sort( (a,b) => {
-//             if ( a[sortedValue] < b[sortedValue] ){
-//               return -1;
-//             }
-//             if ( b[sortedValue] < a[sortedValue] ){
-//               return 1;
-//             }
-//             return 0;
-//           });
-//     }
-
-//     const countriesListNodes = originalArray.length < 50 ? document.querySelectorAll('.country:not([filtered])') : document.querySelectorAll('.country');
-//     for (let index = 0; index < countriesListNodes.length; index += 1) {
-
-//         if (sortedValue !== 'country') {
-//             countriesListNodes[index].children[0].textContent = String(originalArray[index][sortedValue]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//         }  else if (sortCountryListBtns.children[2].hasAttribute('sorted')) {
-//                 countriesListNodes[index].children[0].textContent = String(originalArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//             }   else if (sortCountryListBtns.children[3].hasAttribute('sorted')) {
-//                 countriesListNodes[index].children[0].textContent = String(originalArray[index].deaths).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//             }   else if (sortCountryListBtns.children[4].hasAttribute('sorted')) {
-//                 countriesListNodes[index].children[0].textContent = String(originalArray[index].recovered).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//             }   
-//                 else {
-//                 countriesListNodes[index].children[0].textContent = String(originalArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-//             }
-//         countriesListNodes[index].setAttribute('data-iso2', originalArray[index].countryInfo.iso2);
-//         countriesListNodes[index].setAttribute('data-iso3', originalArray[index].countryInfo.iso3);
-//         countriesListNodes[index].setAttribute('data-population', originalArray[index].population);
-//         countriesListNodes[index].children[1].textContent = originalArray[index].country;
-//         countriesListNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${originalArray[index].countryInfo.iso2}/shiny/64.png)`;
-//     }
-// }
-
-// function disactiveSortBtns(){
-//     for (let index = 1; index < sortCountryListBtns.childNodes.length; index += 1) {
-//         sortCountryListBtns.children[index].removeAttribute('sorted');
-//         sortCountryListBtns.children[index].removeAttribute('sortedPast');
-//     }
-// }
-
-// countryBtn.addEventListener('click', function clickCountryBtn() {
-//     for (let index = 2; index < sortCountryListBtns.childNodes.length; index += 1) {
-//         if (sortCountryListBtns.children[index].hasAttribute('sorted')) {
-//             sortCountryListBtns.children[index].setAttribute('sortedPast', 'yes');
-//         }
-//     }
-
-//     if (this.hasAttribute('sorted')) {
-//         if (this.getAttribute('sorted') === 'forward') {
-//             this.setAttribute('sorted', 'reverse');
-//             if (searchField.value) {
-//                 sortCountriesList('country', true, searchFieldArray);
-//             } else {
-//                 sortCountriesList('country', true);
-//             }
-//         } else {
-//             this.setAttribute('sorted', 'forward');
-//             if (searchField.value) {
-//                 sortCountriesList('country', false, searchFieldArray);
-//             } else {
-//                 sortCountriesList('country');
-//             }      
-//         }
-//     } else {
-//         this.setAttribute('sorted', 'forward');
-//         if (searchField.value) {
-//             sortCountriesList('country', false, searchFieldArray);
-//         } else {
-//             sortCountriesList('country');
-//         }   
-//     }
-// })
-
-
-// confirmedBtn.addEventListener('click', function clickConfirmedBtn() {
-//     if (this.hasAttribute('sorted')) {
-//         if (this.getAttribute('sorted') === 'forward') {
-//             disactiveSortBtns();
-//             this.setAttribute('sorted', 'reverse');
-//             if (searchField.value) {
-//                 sortCountriesList('cases', true, searchFieldArray);
-//             } else {
-//                 sortCountriesList('cases', true);
-//             }
-//         } else {
-//             disactiveSortBtns();
-//             this.setAttribute('sorted', 'forward');
-//             if (searchField.value) {
-//                 sortCountriesList('cases', false, searchFieldArray);
-//             } else {
-//                 sortCountriesList('cases');
-//             }      
-//         }
-//     } else {
-//         disactiveSortBtns();
-//         this.setAttribute('sorted', 'forward');
-//         if (searchField.value) {
-//             sortCountriesList('cases', false, searchFieldArray);
-//         } else {
-//             sortCountriesList('cases');
-//         }   
-//     }
-// })
-
-// deathBtn.addEventListener('click', function clickDeathBtn() {
-//       if (this.hasAttribute('sorted')) {
-//         if (this.getAttribute('sorted') === 'forward') {
-//             disactiveSortBtns();
-//             this.setAttribute('sorted', 'reverse');
-//             if (searchField.value) {
-//                 sortCountriesList('deaths', true, searchFieldArray);
-//             } else {
-//                 sortCountriesList('deaths', true);
-//             }
-//         } else {
-//             disactiveSortBtns();
-//             this.setAttribute('sorted', 'forward')
-//             if (searchField.value) {
-//                 sortCountriesList('deaths', false, searchFieldArray);
-//             } else {
-//                 sortCountriesList('deaths');
-//             } 
-//         }
-//     } else {
-//         disactiveSortBtns();
-//         this.setAttribute('sorted', 'forward');
-//         if (searchField.value) {
-//             sortCountriesList('deaths', false, searchFieldArray);
-//         } else {
-//             sortCountriesList('deaths');
-//         }   
-//     }
-// })
-
-// recoverBtn.addEventListener('click', function clickRecoverBtn() {
-//     if (this.hasAttribute('sorted')) {
-//         if (this.getAttribute('sorted') === 'forward') {
-//             disactiveSortBtns();
-//             this.setAttribute('sorted', 'reverse');
-//             if (searchField.value) {
-//                 sortCountriesList('recovered', true, searchFieldArray);
-//             } else {
-//                 sortCountriesList('recovered', true);
-//             }
-//         } else {
-//             disactiveSortBtns();
-//             this.setAttribute('sorted', 'forward')
-//             if (searchField.value) {
-//                 sortCountriesList('recovered', false, searchFieldArray);
-//             } else {
-//                 sortCountriesList('recovered');
-//             } 
-//         }
-//     } else {
-//         disactiveSortBtns();
-//         this.setAttribute('sorted', 'forward');
-//         if (searchField.value) {
-//             sortCountriesList('recovered', false, searchFieldArray);
-//         } else {
-//             sortCountriesList('recovered');
-//         }  
-//     }
-// })
 
 
 export default sortBtsEvent;
