@@ -30,7 +30,7 @@ sortCountryListBtnsSwitcher.type = 'checkbox';
 sortCountryListBtnsSwitcher.classList.add('sortCountryListBtnsSwitcher');
 sortCountryListBtns.appendChild(sortCountryListBtnsSwitcher);
 
-let allCountriesArrayForSorting;
+let allCountriesFinalArray;
 
 function sortCountryListBtnDisactive() {
     for (let idx = 0; idx < sortCountryListBtnsSubWrapper.childNodes.length; idx += 1) {
@@ -39,10 +39,13 @@ function sortCountryListBtnDisactive() {
 } 
 
 function sortCountriesList() {
-       
-       const value = this.getAttribute('data-type');
-
-        allCountriesArrayForSorting.sort( (a,b) => {
+    let activeCountryISO;
+    const value = this.getAttribute('data-type');
+    
+       if (localStorage.getItem('currentCountryISO3')) {
+           activeCountryISO = document.querySelector('.country.active').getAttribute('data-iso3');
+       }
+       allCountriesFinalArray.sort( (a,b) => {
         if ( a[value] * 100 > b[value] * 100){
           return -1;
         }
@@ -51,26 +54,28 @@ function sortCountriesList() {
         }
         return 0;
       });
-        
-      const countriesListNodes = countriesList.childNodes;
-
+    
       for (let index = 0; index < countriesList.childNodes.length; index += 1) {
-            countriesListNodes[index].children[0].textContent = String(allCountriesArrayForSorting[index][value]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-            countriesListNodes[index].setAttribute('data-iso2', allCountriesArrayForSorting[index].iso2);
-            countriesListNodes[index].setAttribute('data-iso3', allCountriesArrayForSorting[index].iso3);
-            countriesListNodes[index].setAttribute('data-population', allCountriesArrayForSorting[index].population);
-            countriesListNodes[index].children[1].textContent = allCountriesArrayForSorting[index].country;
-            countriesListNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${allCountriesArrayForSorting[index].iso2}/shiny/64.png)`;
+        countriesList.childNodes[index].classList.remove('active');
+        countriesList.childNodes[index].children[0].textContent = String(allCountriesFinalArray[index][value]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+        countriesList.childNodes[index].setAttribute('data-iso2', allCountriesFinalArray[index].iso2);
+        countriesList.childNodes[index].setAttribute('data-iso3', allCountriesFinalArray[index].iso3);
+        countriesList.childNodes[index].setAttribute('data-population', allCountriesFinalArray[index].population);
+        countriesList.childNodes[index].children[1].textContent = allCountriesFinalArray[index].country;
+        countriesList.childNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${allCountriesFinalArray[index].iso2}/shiny/64.png)`;
       }
-
+      if (activeCountryISO) {
+          document.querySelector(`[data-iso3=${activeCountryISO}]`).classList.add('active');
+      }
 }
-
 
 for (let i = 1; i <= 12; i += 1) {
     const sortCountryListBtn =  document.createElement('button');
     sortCountryListBtn.classList.add('sortCountryListBtn');
+    localStorage.setItem('currentDataNumber', '3');
     sortCountryListBtn.addEventListener('click', sortCountriesList);
-    sortCountryListBtn.addEventListener('click', function() {
+    sortCountryListBtn.addEventListener('click', function sortCountryListBtnClick() {
+        localStorage.setItem('currentDataNumber', i - 1);
         if (!this.classList.contains('acive')) {
             sortCountryListBtnDisactive();
             this.classList.add('active');
@@ -132,31 +137,7 @@ for (let i = 1; i <= 12; i += 1) {
     
     sortCountryListBtnsSubWrapper.appendChild(sortCountryListBtn);
 }
-
-
-
-
-    
-
-//     // sortCountryListBtn.addEventListener('click', function() {
-//     //     if (!this.classList.contains('acive')) {
-//     //         sortCountryListBtnDisactive();
-//     //         this.classList.add('active');
-//     //         graphBtnExportEvents(i - 1);
-//     //         }
-//     //     });
-
-//     sortCountryListBtnsSubWrapper.appendChild(sortCountryListBtn);
-// }
-
-
-
-for (let index = 0; index < sortCountryListBtnsSubWrapper.childNodes.length; index += 1) {
-    
-    // sortCountryListBtnsSubWrapper.children[index].sort = ;
-    // sortCountryListBtnsSubWrapper.children[index].addEventListener('click', );
-}
-
+  
 function sortCountryListBtnSwitcher(group) {
     if (group === 1) {
         for (let idx = 0; idx < sortCountryListBtnsSubWrapper.childNodes.length; idx += 1) {
@@ -177,7 +158,21 @@ function sortCountryListBtnSwitcher(group) {
     }
 }
 
-sortCountryListBtnsSwitcher.addEventListener('click', function (){
+function sortBtsEvent(number) {
+    sortCountryListBtnDisactive();
+    if (number < 6) {
+        sortCountryListBtnSwitcher(2);
+        sortCountryListBtnsSwitcher.checked = false;
+    } else {
+        sortCountryListBtnSwitcher(1);
+        sortCountryListBtnsSwitcher.checked = true;
+    }
+    sortCountryListBtnsSubWrapper.children[number].classList.add('active');
+    sortCountriesList.call(sortCountryListBtnsSubWrapper.children[number]);
+}
+
+
+sortCountryListBtnsSwitcher.addEventListener('click', function sortCountryListBtnsSwitcherClick (){
     if(this.checked) {
         sortCountryListBtnSwitcher(1);
     } else {
@@ -216,7 +211,6 @@ async function getCurrentCountryData() {
         let selectedCountryConfirmedDay = [];
         let selectedCountryDeathsDay = [];
         let selectedCountryRecoveredDay = [];
-
 
         const selectedCountryConfirmedCummulative100k = [];
         const selectedCountryDeathsCummulative100k = [];
@@ -258,8 +252,6 @@ async function getCurrentCountryData() {
             selectedCountryConfirmedCummulative100k.push((selectedCountryConfirmedCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
             selectedCountryDeathsCummulative100k.push((selectedCountryDeathsCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
             selectedCountryRecoveredCummulative100k.push((selectedCountryRecoveredCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
-
-
         }
 
         localStorage.setItem('selectedCountryDates', JSON.stringify(selectedCountryDates));
@@ -278,35 +270,16 @@ async function getCurrentCountryData() {
         localStorage.setItem('Summary deaths per 100k', JSON.stringify(selectedCountryDeathsCummulative100k));
         localStorage.setItem('Summary recovered per 100k', JSON.stringify(selectedCountryRecoveredCummulative100k));
 
-        graphBtnExportEvents(3, true);
+        graphBtnExportEvents(localStorage.getItem('currentDataNumber'), true);
         graphWrapper.classList.remove('loading');
     }
 }
 
 function buildCountryPanel() {
     const allCountriesArray = JSON.parse(localStorage.getItem('All country list'));
-    allCountriesArrayForSorting = new Array(allCountriesArray.length);
+    allCountriesFinalArray = JSON.parse(localStorage.getItem('All country list final'));
 
     for (let index = 0; index < allCountriesArray.length; index += 1) {
-
-        allCountriesArrayForSorting[index] = {};
-        allCountriesArrayForSorting[index].cases = allCountriesArray[index].cases;
-        allCountriesArrayForSorting[index].casesPer100k = (allCountriesArray[index].casesPerOneMillion / 10).toFixed(2);
-        allCountriesArrayForSorting[index].deaths = allCountriesArray[index].deaths;
-        allCountriesArrayForSorting[index].deathsPer100k = (allCountriesArray[index].deathsPerOneMillion / 10).toFixed(2);
-        allCountriesArrayForSorting[index].recovered = allCountriesArray[index].recovered;
-        allCountriesArrayForSorting[index].recoveredPer100k = (allCountriesArray[index].recoveredPerOneMillion / 10).toFixed(2);
-        allCountriesArrayForSorting[index].todayCases = allCountriesArray[index].todayCases;
-        allCountriesArrayForSorting[index].todayDeaths = allCountriesArray[index].todayDeaths;
-        allCountriesArrayForSorting[index].todayRecovered = allCountriesArray[index].todayRecovered;
-
-        allCountriesArrayForSorting[index].todayCases100k = ((allCountriesArray[index].todayCases /  allCountriesArray[index].population) * 100000).toFixed(3);
-        allCountriesArrayForSorting[index].todayDeaths100k = ((allCountriesArray[index].todayDeaths /  allCountriesArray[index].population) * 100000).toFixed(3);
-        allCountriesArrayForSorting[index].todayRecovered100k = ((allCountriesArray[index].todayRecovered / allCountriesArray[index].population) * 100000).toFixed(3);
-        allCountriesArrayForSorting[index].iso2 = allCountriesArray[index].countryInfo.iso2;
-        allCountriesArrayForSorting[index].iso3 = allCountriesArray[index].countryInfo.iso3;
-        allCountriesArrayForSorting[index].country = allCountriesArray[index].country;
-        allCountriesArrayForSorting[index].population = allCountriesArray[index].population;
 
         const option = document.createElement('div');
         option.classList.add('country');
@@ -315,8 +288,7 @@ function buildCountryPanel() {
 
         spanValaue.classList.add('optionValue');
         spanCountryName.classList.add('optionCountryName');
-
-        
+   
         spanValaue.textContent = String(allCountriesArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
         spanCountryName.textContent = allCountriesArray[index].country;
         option.setAttribute('data-iso2', `${allCountriesArray[index].countryInfo.iso2}`);
@@ -330,6 +302,7 @@ function buildCountryPanel() {
         option.addEventListener('click', getCurrentCountryData);
         countriesList.appendChild(option);  
     }
+    sortCountriesList.call(sortCountryListBtnsSubWrapper.children[3]);
 };
 
 (async function getGlobalData () {
@@ -338,6 +311,7 @@ function buildCountryPanel() {
 
     if (localStorage.getItem('updateDate') === todayUpdate) {
         localStorage.setItem('currentCountry', 'Global');
+        localStorage.setItem('currentCountryISO3', '');
         graphBtnExportEvents(3);
         graphWrapper.classList.remove('loading');
         return;
@@ -419,8 +393,6 @@ function buildCountryPanel() {
     const todayUpdate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 
     if (localStorage.getItem('All country list') && (localStorage.getItem('updateDate') === todayUpdate)) {
-
-    //
         buildCountryPanel();
         return;
     }
@@ -431,7 +403,32 @@ function buildCountryPanel() {
 
     const response  = await fetch(`https://disease.sh/v3/covid-19/countries?yesterday=false&twoDaysAgo=false`);
     const countryNamesArray  = (await response.json()).filter(e => excludeCountries.indexOf(e.countryInfo.iso3) === - 1);
+
+    allCountriesFinalArray = new Array((await countryNamesArray).length);
+
+    for (let index = 0; index < allCountriesFinalArray.length; index += 1) {
+
+        allCountriesFinalArray[index] = {};
+        allCountriesFinalArray[index].cases = countryNamesArray[index].cases;
+        allCountriesFinalArray[index].casesPer100k = (countryNamesArray[index].casesPerOneMillion / 10).toFixed(2);
+        allCountriesFinalArray[index].deaths = countryNamesArray[index].deaths;
+        allCountriesFinalArray[index].deathsPer100k = (countryNamesArray[index].deathsPerOneMillion / 10).toFixed(2);
+        allCountriesFinalArray[index].recovered = countryNamesArray[index].recovered;
+        allCountriesFinalArray[index].recoveredPer100k = (countryNamesArray[index].recoveredPerOneMillion / 10).toFixed(2);
+        allCountriesFinalArray[index].todayCases = countryNamesArray[index].todayCases;
+        allCountriesFinalArray[index].todayDeaths = countryNamesArray[index].todayDeaths;
+        allCountriesFinalArray[index].todayRecovered = countryNamesArray[index].todayRecovered;
+
+        allCountriesFinalArray[index].todayCases100k = ((countryNamesArray[index].todayCases / countryNamesArray[index].population) * 100000).toFixed(3);
+        allCountriesFinalArray[index].todayDeaths100k = ((countryNamesArray[index].todayDeaths / countryNamesArray[index].population) * 100000).toFixed(3);
+        allCountriesFinalArray[index].todayRecovered100k = ((countryNamesArray[index].todayRecovered / countryNamesArray[index].population) * 100000).toFixed(3);
+        allCountriesFinalArray[index].iso2 = countryNamesArray[index].countryInfo.iso2;
+        allCountriesFinalArray[index].iso3 = countryNamesArray[index].countryInfo.iso3;
+        allCountriesFinalArray[index].country = countryNamesArray[index].country;
+        allCountriesFinalArray[index].population = countryNamesArray[index].population;
+    }
     
+    localStorage.setItem('All country list final', JSON.stringify(allCountriesFinalArray));
     localStorage.setItem('All country list', JSON.stringify(countryNamesArray));
     buildCountryPanel();
 })();
@@ -453,7 +450,7 @@ filterField.addEventListener("input", (event) => {
             options[i].setAttribute('filtered', 'yes');
         } else {
             if (searchString) {
-                const obj = allCountriesArrayForSorting.find(element => element.country === options[i].children[1].textContent);
+                const obj = allCountriesFinalArray.find(element => element.country === options[i].children[1].textContent);
                 searchFieldArray.push(obj);
             }
             options[i].removeAttribute('filtered');
@@ -640,6 +637,6 @@ filterField.addEventListener("input", (event) => {
 // })
 
 
-// export default summarySelectedCountryData;
+export default sortBtsEvent;
 
 // var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen; console.log(_x.substr(0,50)+" = "+ (_xLen/1024).toFixed(2)+" KB")};console.log("Total = " + (_lsTotal / 1024).toFixed(2) + " KB");
