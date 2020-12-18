@@ -4,13 +4,14 @@
   box-shadow: inset 0 0 10px;
   background-color: rgba(35, 35, 3, 0.2);
   position: absolute;
-  right: 405px;
-  top: 9%;
+  top: calc(5% + 2px);
+  left: 52%;
   border-radius: 5px;
   color: rgba(0, 0, 0, 0.6);
   font-weight: 700;
   box-sizing: border-box;
   min-width: 500px;
+  min-height: 276px;
 }
 .statistics__header {
   text-align: center;
@@ -107,7 +108,7 @@
   column-gap: 10px;
   margin-top: 15px;
   align-items: center;
-  .graphSwitcher {
+  .graphSwitcherType {
     position: static;
     width: 54px;
     &::before {

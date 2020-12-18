@@ -77,7 +77,7 @@ export default class CreateStatistics {
     const switchPopulation = CreateStatistics.createDomElement('div', 'switch__population');
     switchPopulation.innerText = 'Per 100 thousand population';
     this.switchToggle = CreateStatistics.createDomElement('div', 'switch__statistics');
-    this.switchToggle.innerHTML = '<input checked class="graphSwitcher" type="checkbox">';
+    this.switchToggle.innerHTML = '<input checked class="graphSwitcherType" type="checkbox">';
     this.switchToggle.dataset.index = 3;
     wrapperSwitch.append(switchTotal);
     wrapperSwitch.append(this.switchToggle);
