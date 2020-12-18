@@ -6,13 +6,14 @@ $font_2: 'Rubik', sans-serif;
 
 .countriesModule {
     position: absolute;
-    top: 43%;
+    top: calc(38% + 4px);
     left: 0;
     width: 20%;
-    height: 55%;
+    height: 60%;
     padding: 0 10px;
     box-shadow: inset 0 0 10px;
     background-color: rgba(35,35,3, 0.2);
+    border-radius: 5px;
     // grid-area: 3 / 1 / 5 / 2;
 }
 
@@ -37,31 +38,113 @@ $font_2: 'Rubik', sans-serif;
     font-weight: 700;
     display: flex;
     justify-content: space-around;
+     padding: 5px 0;
+    // margin-bottom: 10px;
+    height: 90px;
+}
+
+.sortCountryListBtnsSubWrapper {
+    display: flex;
     flex-wrap: wrap;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
 }
-.sortCountryListBtnsTitle {
-    text-align: center;
-    line-height: 1.5;
-    width: 100%;
-    color: dimgray;
+.sortCountryListBtnsSwitcher {
+    // height: 90%;
+    width: 18%;
+    appearance: none;
+	border-radius: 5px;
+	border: 2px solid #696969;
+    transition: 0.2s;
+    position: relative;
+    cursor: pointer;
     text-transform: uppercase;
-    font-weight: 700;
-    font-size: 18px;
-}
-.sortCountryListBtn {
-    height: 24px;
-    width: 24%;
-    text-align: left;
-    padding-left: 0.5em;
-    background: dimgray;
-    color: floralwhite;
+    font-size: 0.6em;
+    letter-spacing: 2px;
+    font-family: $font_1;
+    box-shadow: inset 0 0 10px;
+    background-color: rgba(35,35,3, 0.2);
+    color: #fffaf0;
     text-transform: uppercase;
     font-weight: 700;
     font-size: 10px;
+
+	&:focus {
+		outline: none;
+    }
+    &:before {
+        position: absolute;
+        top: 30%;
+        width: 100%;
+        text-align: center;
+        content: 'all peoples';
+    }
+	&:after {
+		content: "";
+		width: 100%;
+		height: 20%;
+		background: #696969;
+		position: absolute;
+		top: 0;
+		margin: auto;
+		transition: 0.2s;
+		box-shadow: 1px 0 5px -1px rgba(0, 0, 0, 0.2);
+	}
+	&:checked {
+        &:before {
+            text-align: center;
+            content: 'per \00000a100k';
+            white-space: pre;
+            top: 20%;
+        }
+		&:after {
+			top: 80%;
+			box-shadow: -1px 0 5px -1px rgba(0, 0, 0, 0.2);
+		}
+	}
+}
+
+.sortCountryListBtn {
+    height: 42%;
+    width: 32%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: dimgray;
+    color: floralwhite;
+    font-size: 0.5em;
+    text-transform: uppercase;
+    transition: 0.3s;
+    padding: 0 8px;
+    cursor: pointer;
     border-radius: 3px;
     transition: 0.3s;
+    &:nth-child(6), &:nth-child(7), &:nth-child(8) {
+        padding: 0 17px;
+    } 
+    &.active {
+        background-color: #488f8f;
+        box-shadow: inset 0 0 10px;
+        background-color: rgba(35,35,3, 0.8);
+    }
+    &:not(:last-child) {
+        border-right: 1px solid rgba(35,35,3, 0.8);
+    }
+    &:hover {
+        background-color: #488f8f;
+        box-shadow: inset 0 0 10px;
+        background-color: rgba(35,35,3, 0.8);
+    }
+    &:active {
+        transform: translate(2px, 2px);
+    }
+    &.hidden {
+        display: none;
+    }
+    &.hidden {
+        display: none;
+    }
     &[sorted="forward"], &[sorted="reverse"] {
         position: relative;
         background-color: #488f8f;
@@ -88,18 +171,10 @@ $font_2: 'Rubik', sans-serif;
             content: '';
         }
     }
-    &:hover {
-        background-color: #488f8f;
-        box-shadow: inset 0 0 10px;
-        background-color: rgba(35,35,3, 0.8);
-    }
-    &:active {
-        transform: translate(2px, 2px);
-    }
 }
 
 .countriesList {
-    height: 406px;
+    height: 70%;
     overflow-y: scroll;
     width: 100%;
 }
@@ -117,6 +192,15 @@ $font_2: 'Rubik', sans-serif;
     box-shadow: inset 0 0 10px;
     background-color: rgba(35,35,3, 0.2);
     transition: 0.15s;
+    &.active, &:hover {
+        cursor: pointer;
+        color: white;
+        box-shadow: inset 0 0 10px;
+        background-color: rgba(35,35,3, 0.8);
+        span:first-child {
+            color: white;
+        }
+    }
 }
 .optionValue {
     display: inline-block;
@@ -127,12 +211,12 @@ $font_2: 'Rubik', sans-serif;
     display: inline-block;
     text-align: left;
 }
-.country:hover {
-    cursor: pointer;
-    color: white;
-    box-shadow: inset 0 0 10px;
-    background-color: rgba(35,35,3, 0.8);
-    span:first-child {
-        color: white;
-    }
-}
+// .country:hover {
+//     cursor: pointer;
+//     color: white;
+//     box-shadow: inset 0 0 10px;
+//     background-color: rgba(35,35,3, 0.8);
+//     span:first-child {
+//         color: white;
+//     }
+// }
