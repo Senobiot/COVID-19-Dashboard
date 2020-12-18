@@ -1,3 +1,5 @@
+import sortBtsEvent from './country_panel';
+
 const graphConfig = {
     type: 'bar',
     data: {
@@ -54,6 +56,21 @@ graphControlPanelTypeBtn.classList.add('graphSwitcherType');
 const graphControlPanelDataBtn =  document.createElement('input');
 graphControlPanelDataBtn.type = "checkbox";
 graphControlPanelDataBtn.classList.add('graphSwitcherData');
+
+const fullScreenBtn = document.createElement('div');
+fullScreenBtn.classList.add('fullScreenGraph');
+
+graphWrapper.appendChild(graph);
+graphWrapper.appendChild(graphControlPanelTypeBtn);
+graphWrapper.appendChild(graphControlPanelDataBtn);
+graphWrapper.appendChild(graphControlPanel);
+graphWrapper.appendChild(fullScreenBtn);
+
+document.body.appendChild(graphWrapper);
+
+const ctx = document.getElementById('myChart').getContext('2d');
+
+const myChart = new Chart(ctx, graphConfig);
 
 for (let i = 1; i <= 12; i += 1) {
     const graphControlPanelCaseBtn =  document.createElement('button');
@@ -133,13 +150,16 @@ function graphControlPanelBtnsGroup(group) {
     }
 }
 
-
 for (let index = 0; index < graphControlPanel.childNodes.length; index += 1) {
     graphControlPanel.children[index].draw = graphBtsEvent;
     graphControlPanel.children[index].addEventListener('click', graphBtsEvent);
+    graphControlPanel.children[index].addEventListener('click', () => {
+        localStorage.setItem('currentDataNumber', index)
+        sortBtsEvent(index);
+    });
 }
 
-const graphBtnExportEvents = function (number, changeCountry){
+const graphBtnExportEvents = function graphBtnExportEventsClick (number, changeCountry){
     if (number < 6 && graphControlPanelDataBtn.checked) {
         graphControlPanelDataBtn.checked = false;
         graphControlPanelBtnsGroup(2);
@@ -149,21 +169,6 @@ const graphBtnExportEvents = function (number, changeCountry){
     }
     graphControlPanel.children[number].draw(changeCountry);
 }
-
-const fullScreenBtn = document.createElement('div');
-fullScreenBtn.classList.add('fullScreenGraph');
-
-graphWrapper.appendChild(graph);
-graphWrapper.appendChild(graphControlPanelTypeBtn);
-graphWrapper.appendChild(graphControlPanelDataBtn);
-graphWrapper.appendChild(graphControlPanel);
-graphWrapper.appendChild(fullScreenBtn);
-
-document.body.appendChild(graphWrapper);
-
-const ctx = document.getElementById('myChart').getContext('2d');
-
-const myChart = new Chart(ctx, graphConfig);
 
 graphControlPanelTypeBtn.addEventListener('click', function clickGraphControlPanelTypeBtn(){
     if(this.checked) {
