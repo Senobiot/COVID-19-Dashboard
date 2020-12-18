@@ -17,6 +17,7 @@ import CreateStatistics from './table-statistics';
 
 let todayData = '';
 const statistics = new CreateStatistics(document.body);
+let isTotal = false;
 
 // Получаем total статистику
 const getTotalData = async () => {
@@ -26,7 +27,7 @@ const getTotalData = async () => {
 
 // Обрабока клика по таблице статистики
 const addHandlerClickStatistics = () => {
-  statistics.list.addEventListener('mouseup', (e) => {
+  statistics.wrapperTable.addEventListener('mouseup', (e) => {
     const item = e.target;
     if (item.tagName === 'SPAN' || item.tagName === 'LI') {
       let currentLi = '';
@@ -35,9 +36,23 @@ const addHandlerClickStatistics = () => {
       } else if (item.tagName === 'LI') {
         currentLi = item;
       }
-      const property = currentLi.querySelector('span').innerText;
       const dataKey = currentLi.dataset.key;
-      statistics.setCurrentData(property, todayData, dataKey);
+      const dataIndex = Number(currentLi.dataset.index);
+      statistics.setCurrentProperty(dataKey, dataIndex);
+      statistics.switchToggle.dataset.index = dataIndex;
+    } else if (item.tagName === 'INPUT') {
+      let dataIndex = Number(item.closest('.switch__statistics').dataset.index);
+      if (isTotal) {
+        isTotal = false;
+        statistics.generateListStatistics(todayData, 7793895016, isTotal);
+        if (dataIndex > 5) dataIndex -= 6;
+        statistics.setCurrentData(dataIndex);
+      } else {
+        isTotal = true;
+        statistics.generateListStatistics(todayData, 7793895016, isTotal);
+        if (dataIndex < 6) dataIndex += 6;
+        statistics.setCurrentData(dataIndex);
+      }
     }
   });
 };
@@ -52,7 +67,7 @@ const createStatisticsFirstOnload = () => {
 const initApp = async () => {
   createStatisticsFirstOnload();
   await getTotalData();
-  statistics.generateListStatistics(todayData);
+  statistics.generateListStatistics(todayData, 7793895016, isTotal);
   addHandlerClickStatistics();
 };
 initApp();

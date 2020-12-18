@@ -1,16 +1,16 @@
+/* eslint-disable max-len */
 export default class CreateStatistics {
   constructor(body) {
     this.body = body;
     this.wrapperTable = '';
-    this.properties = ['Daily Cases', 'Daily Deaths', 'Daily Recovered', 'Cumulative Confirmed', 'Cummulative Deaths', 'Cummulative Recovered'];
+    this.properties = ['Daily Cases', 'Daily Deaths', 'Daily Recovered', 'Summary Confirmed', 'Summary Deaths', 'Summary Recovered'];
     this.dataAttributes = ['todayCases', 'todayDeaths', 'todayRecovered', 'cases', 'deaths', 'recovered'];
   }
 
-  createTableStatistics(srcImg, title, data, current) {
-    this.data = data;
+  createTableStatistics(srcImg, title, current) {
     this.wrapperTable = CreateStatistics.createDomElement('div', 'wrapper-statistics');
     this.body.append(this.wrapperTable);
-    this.generateTableStatistics(srcImg, title, data, current);
+    this.generateTableStatistics(srcImg, title, current);
   }
 
   generateTableStatistics(srcImg, title, current) {
@@ -42,14 +42,29 @@ export default class CreateStatistics {
     this.generateSwitch();
   }
 
-  generateListStatistics(data) {
-    this.currentData.innerText = `${String(data.cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')}`;
+  static getPerPopulation(data, population) {
+    const countThousands = population / 100000;
+    return Number((data / countThousands).toFixed(3));
+  }
+
+  generateListStatistics(data, population, isTotal) {
+    let additionalNumber = 0;
+    if (isTotal) {
+      additionalNumber = 6;
+    }
+    if (this.list) {
+      this.list.remove();
+    }
     const arraryData = [data.todayCases, data.todayDeaths, data.todayRecovered, data.cases, data.deaths, data.recovered];
+    const arraryDataPerPopulation = arraryData.reduce((arr, element) => arr.concat(CreateStatistics.getPerPopulation(element, population)), []);// расчет на 100 тыс. населения
+    this.arraryData = arraryData.concat(arraryDataPerPopulation);
+    this.currentData.innerText = `${String(this.arraryData[3]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ')}`;
     this.list = CreateStatistics.createDomElement('ul', 'list__statistics');
     this.properties.forEach((element, index) => {
       const li = CreateStatistics.createDomElement('li', 'item__statistics');
       li.dataset.key = `${this.dataAttributes[index]}`;
-      li.innerHTML = `<span>${element}</span><span class="property">${arraryData[index]}</span>`;
+      li.dataset.index = index + additionalNumber;
+      li.innerHTML = `<span>${element}</span><span class="property">${this.arraryData[index + additionalNumber]}</span>`;
       this.list.append(li);
     });
     this.statisticsContent.append(this.list);
@@ -61,17 +76,22 @@ export default class CreateStatistics {
     switchTotal.innerText = 'Absolute';
     const switchPopulation = CreateStatistics.createDomElement('div', 'switch__population');
     switchPopulation.innerText = 'Per 100 thousand population';
-    const switchToggle = CreateStatistics.createDomElement('div', 'switch__statistics');
-    switchToggle.innerHTML = '<input checked class="graphSwitcher" type="checkbox">';
+    this.switchToggle = CreateStatistics.createDomElement('div', 'switch__statistics');
+    this.switchToggle.innerHTML = '<input checked class="graphSwitcher" type="checkbox">';
+    this.switchToggle.dataset.index = 3;
     wrapperSwitch.append(switchTotal);
-    wrapperSwitch.append(switchToggle);
+    wrapperSwitch.append(this.switchToggle);
     wrapperSwitch.append(switchPopulation);
     this.wrapperTable.append(wrapperSwitch);
   }
 
-  setCurrentData(property, data, key) {
-    this.currentData.innerText = String(data[key]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
-    this.currentProperty.innerText = property;
+  setCurrentProperty(key, index) {
+    this.currentData.innerText = String(this.arraryData[index]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+    let indexProperty = index;
+    if (index > 5) {
+      indexProperty = index - 6;
+    }
+    this.currentProperty.innerText = this.properties[indexProperty];
     const str = key.toLowerCase();
     if (str.includes('cases')) {
       this.currentData.style.color = '#675D04';
@@ -80,6 +100,10 @@ export default class CreateStatistics {
     } else if (str.includes('recovered')) {
       this.currentData.style.color = '#1B481B';
     }
+  }
+
+  setCurrentData(index) {
+    this.currentData.innerText = String(this.arraryData[index]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
   }
 
   static createDomElement(element, ...className) {
