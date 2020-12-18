@@ -28,7 +28,7 @@ sortCountryListBtnsSwitcher.type = 'checkbox';
 sortCountryListBtnsSwitcher.classList.add('sortCountryListBtnsSwitcher');
 sortCountryListBtns.appendChild(sortCountryListBtnsSwitcher);
 
-let allCountriesArrayForSorting;
+let allCountriesFinalArray;
 
 function sortCountryListBtnDisactive() {
   for (let idx = 0; idx < sortCountryListBtnsSubWrapper.childNodes.length; idx += 1) {
@@ -37,6 +37,7 @@ function sortCountryListBtnDisactive() {
 }
 
 function sortCountriesList() {
+<<<<<<< HEAD
   const value = this.getAttribute('data-type');
 
   allCountriesArrayForSorting.sort((a, b) => {
@@ -70,6 +71,90 @@ for (let i = 1; i <= 12; i += 1) {
       sortCountryListBtnDisactive();
       this.classList.add('active');
       graphBtnExportEvents(i - 1);
+=======
+    let activeCountryISO;
+    const value = this.getAttribute('data-type');
+    
+       if (localStorage.getItem('currentCountryISO3')) {
+           activeCountryISO = document.querySelector('.country.active').getAttribute('data-iso3');
+       }
+       allCountriesFinalArray.sort( (a,b) => {
+        if ( a[value] * 100 > b[value] * 100){
+          return -1;
+        }
+        if ( b[value] * 100 > a[value] * 100){
+          return 1;
+        }
+        return 0;
+      });
+    
+      for (let index = 0; index < countriesList.childNodes.length; index += 1) {
+        countriesList.childNodes[index].classList.remove('active');
+        countriesList.childNodes[index].children[0].textContent = String(allCountriesFinalArray[index][value]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+        countriesList.childNodes[index].setAttribute('data-iso2', allCountriesFinalArray[index].iso2);
+        countriesList.childNodes[index].setAttribute('data-iso3', allCountriesFinalArray[index].iso3);
+        countriesList.childNodes[index].setAttribute('data-population', allCountriesFinalArray[index].population);
+        countriesList.childNodes[index].children[1].textContent = allCountriesFinalArray[index].country;
+        countriesList.childNodes[index].style.backgroundImage = `url( https://www.countryflags.io/${allCountriesFinalArray[index].iso2}/shiny/64.png)`;
+      }
+      if (activeCountryISO) {
+          document.querySelector(`[data-iso3=${activeCountryISO}]`).classList.add('active');
+      }
+}
+
+for (let i = 1; i <= 12; i += 1) {
+    const sortCountryListBtn =  document.createElement('button');
+    sortCountryListBtn.classList.add('sortCountryListBtn');
+    localStorage.setItem('currentDataNumber', '3');
+    sortCountryListBtn.addEventListener('click', sortCountriesList);
+    sortCountryListBtn.addEventListener('click', function sortCountryListBtnClick() {
+        localStorage.setItem('currentDataNumber', i - 1);
+        if (!this.classList.contains('acive')) {
+            sortCountryListBtnDisactive();
+            this.classList.add('active');
+            graphBtnExportEvents(i - 1);
+            }
+        });
+
+    if (i > 6) {sortCountryListBtn.classList.add('hidden')};
+
+    if (i === 1) {
+        sortCountryListBtn.textContent = 'Today confirmed';
+        sortCountryListBtn.setAttribute('data-type', 'todayCases');
+    }
+    if (i === 2) {
+        sortCountryListBtn.textContent = 'Today deaths';
+        sortCountryListBtn.setAttribute('data-type', 'todayDeaths');
+    }
+    if (i === 3) {
+        sortCountryListBtn.textContent = 'Today recovered';
+        sortCountryListBtn.setAttribute('data-type', 'todayRecovered');
+    }
+    if (i === 4) {
+        sortCountryListBtn.textContent = 'Summary confirmed';
+        sortCountryListBtn.setAttribute('data-type', 'cases');
+        sortCountryListBtn.classList.add('active');
+    }
+    if (i === 5) {
+        sortCountryListBtn.textContent = 'Summary deaths';
+        sortCountryListBtn.setAttribute('data-type', 'deaths');
+    }
+    if (i === 6) {
+        sortCountryListBtn.textContent = 'Summary recovered';
+        sortCountryListBtn.setAttribute('data-type', 'recovered');
+    }
+    if (i === 7) {
+        sortCountryListBtn.textContent = 'Today confirmed per 100k';
+        sortCountryListBtn.setAttribute('data-type', 'todayCases100k');
+    }
+    if (i === 8) {
+        sortCountryListBtn.textContent = 'Today deaths per 100k';
+        sortCountryListBtn.setAttribute('data-type', 'todayDeaths100k');
+    }
+    if (i === 9) {
+        sortCountryListBtn.textContent = 'Today recovered per 100k';
+        sortCountryListBtn.setAttribute('data-type', 'todayRecovered100k');
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
     }
   });
 
@@ -127,6 +212,7 @@ for (let i = 1; i <= 12; i += 1) {
 
   sortCountryListBtnsSubWrapper.appendChild(sortCountryListBtn);
 }
+<<<<<<< HEAD
 
 //     // sortCountryListBtn.addEventListener('click', function() {
 //     //     if (!this.classList.contains('acive')) {
@@ -145,6 +231,9 @@ for (let index = 0; index < sortCountryListBtnsSubWrapper.childNodes.length; ind
   // sortCountryListBtnsSubWrapper.children[index].addEventListener('click', );
 }
 
+=======
+  
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
 function sortCountryListBtnSwitcher(group) {
   if (group === 1) {
     for (let idx = 0; idx < sortCountryListBtnsSubWrapper.childNodes.length; idx += 1) {
@@ -165,6 +254,7 @@ function sortCountryListBtnSwitcher(group) {
   }
 }
 
+<<<<<<< HEAD
 sortCountryListBtnsSwitcher.addEventListener('click', function () {
   if (this.checked) {
     sortCountryListBtnSwitcher(1);
@@ -172,6 +262,29 @@ sortCountryListBtnsSwitcher.addEventListener('click', function () {
     sortCountryListBtnSwitcher(2);
   }
 });
+=======
+function sortBtsEvent(number) {
+    sortCountryListBtnDisactive();
+    if (number < 6) {
+        sortCountryListBtnSwitcher(2);
+        sortCountryListBtnsSwitcher.checked = false;
+    } else {
+        sortCountryListBtnSwitcher(1);
+        sortCountryListBtnsSwitcher.checked = true;
+    }
+    sortCountryListBtnsSubWrapper.children[number].classList.add('active');
+    sortCountriesList.call(sortCountryListBtnsSubWrapper.children[number]);
+}
+
+
+sortCountryListBtnsSwitcher.addEventListener('click', function sortCountryListBtnsSwitcherClick (){
+    if(this.checked) {
+        sortCountryListBtnSwitcher(1);
+    } else {
+        sortCountryListBtnSwitcher(2);
+    }
+})
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
 
 sortCountryListBtns.appendChild(sortCountryListBtnsSubWrapper);
 countriesModule.appendChild(sortCountryListBtns);
@@ -182,6 +295,7 @@ countriesModule.appendChild(countriesList);
 document.body.appendChild(countriesModule);
 
 function countryListDisactive() {
+<<<<<<< HEAD
   for (let idx = 0; idx < countriesList.childNodes.length; idx += 1) {
     countriesList.children[idx].classList.remove('active');
   }
@@ -244,15 +358,142 @@ async function getCurrentCountryData() {
       selectedCountryDeathsCummulative100k.push((selectedCountryDeathsCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
       selectedCountryRecoveredCummulative100k.push((selectedCountryRecoveredCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
     }
+=======
+    for (let idx = 0; idx < countriesList.childNodes.length; idx += 1) {
+        countriesList.children[idx].classList.remove('active');    
+    }
+} 
+
+async function getCurrentCountryData() {                   
+    if (localStorage.getItem('currentCountryISO3') !== this.getAttribute('data-iso3')) {
+        countryListDisactive();
+        this.classList.add('active');
+        graphWrapper.classList.add('loading');
+        const response = await fetch(`https://disease.sh/v3/covid-19/historical/${this.getAttribute('data-iso3')}?lastdays=all`);
+        const data  = await response.json();
+        localStorage.setItem('currentCountryISO3', this.getAttribute('data-iso3'));
+        localStorage.setItem('currentCountry', this.children[1].innerText);
+
+        let selectedCountryDates = [];
+        let selectedCountryConfirmedCummulative = [];
+        let selectedCountryDeathsCummulative = [];
+        let selectedCountryRecoveredCummulative = [];
+        let selectedCountryConfirmedDay = [];
+        let selectedCountryDeathsDay = [];
+        let selectedCountryRecoveredDay = [];
+
+        const selectedCountryConfirmedCummulative100k = [];
+        const selectedCountryDeathsCummulative100k = [];
+        const selectedCountryRecoveredCummulative100k = [];
+        const selectedCountryConfirmedDay100k = [];
+        const selectedCountryDeathsDay100k = [];
+        const selectedCountryRecoveredDay100k = [];
+
+        const selectedCountryPopulation = this.getAttribute('data-population');
+        selectedCountryConfirmedDay = [];
+        selectedCountryDeathsDay = [];
+        selectedCountryRecoveredDay = [];
+
+        selectedCountryDates = Object.keys(data.timeline.cases);
+        selectedCountryConfirmedCummulative = Object.values(data.timeline.cases);
+        selectedCountryDeathsCummulative = Object.values(data.timeline.deaths);
+        selectedCountryRecoveredCummulative = Object.values(data.timeline.recovered);
+
+        for (let idx = 0; idx < selectedCountryDates.length; idx += 1) {                   
+
+            if (idx > 0) {
+                const confirmedCalc = selectedCountryConfirmedCummulative[idx] - selectedCountryConfirmedCummulative[idx - 1];
+                    selectedCountryConfirmedDay.push(confirmedCalc >= 0 ? confirmedCalc : 0);
+                const deathsCalc = selectedCountryDeathsCummulative[idx] - selectedCountryDeathsCummulative[idx - 1];
+                    selectedCountryDeathsDay.push(deathsCalc >= 0 ? deathsCalc : 0);
+                const recoverCalc = selectedCountryRecoveredCummulative[idx] - selectedCountryRecoveredCummulative[idx - 1];       
+                    selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);  
+            } 
+            else {
+                selectedCountryConfirmedDay.push(selectedCountryConfirmedCummulative[idx]);
+                selectedCountryDeathsDay.push(selectedCountryDeathsCummulative[idx]);
+                selectedCountryRecoveredDay.push(selectedCountryRecoveredCummulative[idx]);
+            }     
+        }
+        for (let ids = 0; ids < selectedCountryDates.length; ids += 1) {
+            selectedCountryConfirmedDay100k.push((selectedCountryConfirmedDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
+            selectedCountryDeathsDay100k.push((selectedCountryDeathsDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
+            selectedCountryRecoveredDay100k.push((selectedCountryRecoveredDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
+            selectedCountryConfirmedCummulative100k.push((selectedCountryConfirmedCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
+            selectedCountryDeathsCummulative100k.push((selectedCountryDeathsCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
+            selectedCountryRecoveredCummulative100k.push((selectedCountryRecoveredCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
+        }
+
+        localStorage.setItem('selectedCountryDates', JSON.stringify(selectedCountryDates));
+
+        localStorage.setItem('Daily confirmed', JSON.stringify(selectedCountryConfirmedDay));
+        localStorage.setItem('Daily deaths', JSON.stringify(selectedCountryDeathsDay));
+        localStorage.setItem('Daily recovered', JSON.stringify(selectedCountryRecoveredDay));
+        localStorage.setItem('Summary confirmed', JSON.stringify(selectedCountryConfirmedCummulative));
+        localStorage.setItem('Summary deaths', JSON.stringify(selectedCountryDeathsCummulative));
+        localStorage.setItem('Summary recovered', JSON.stringify(selectedCountryRecoveredCummulative));
+        
+        localStorage.setItem('Daily confirmed per 100k', JSON.stringify(selectedCountryConfirmedDay100k));
+        localStorage.setItem('Daily deaths per 100k', JSON.stringify(selectedCountryDeathsDay100k));
+        localStorage.setItem('Daily recovered per 100k', JSON.stringify(selectedCountryRecoveredDay100k));
+        localStorage.setItem('Summary confirmed per 100k', JSON.stringify(selectedCountryConfirmedCummulative100k));
+        localStorage.setItem('Summary deaths per 100k', JSON.stringify(selectedCountryDeathsCummulative100k));
+        localStorage.setItem('Summary recovered per 100k', JSON.stringify(selectedCountryRecoveredCummulative100k));
+
+        graphBtnExportEvents(localStorage.getItem('currentDataNumber'), true);
+        graphWrapper.classList.remove('loading');
+    }
+}
+
+function buildCountryPanel() {
+    const allCountriesArray = JSON.parse(localStorage.getItem('All country list'));
+    allCountriesFinalArray = JSON.parse(localStorage.getItem('All country list final'));
+
+    for (let index = 0; index < allCountriesArray.length; index += 1) {
+
+        const option = document.createElement('div');
+        option.classList.add('country');
+        const spanValaue = document.createElement('span');
+        const spanCountryName = document.createElement('span');
+
+        spanValaue.classList.add('optionValue');
+        spanCountryName.classList.add('optionCountryName');
+   
+        spanValaue.textContent = String(allCountriesArray[index].cases).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+        spanCountryName.textContent = allCountriesArray[index].country;
+        option.setAttribute('data-iso2', `${allCountriesArray[index].countryInfo.iso2}`);
+        option.setAttribute('data-iso3', `${allCountriesArray[index].countryInfo.iso3}`);
+        option.setAttribute('data-population', `${allCountriesArray[index].population}`);
+
+        option.appendChild(spanValaue);
+        option.appendChild(spanCountryName);
+    
+        option.style.backgroundImage = `url( https://www.countryflags.io/${allCountriesArray[index].countryInfo.iso2}/shiny/64.png)`;
+        option.addEventListener('click', getCurrentCountryData);
+        countriesList.appendChild(option);  
+    }
+    sortCountriesList.call(sortCountryListBtnsSubWrapper.children[3]);
+};
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
 
     localStorage.setItem('selectedCountryDates', JSON.stringify(selectedCountryDates));
 
+<<<<<<< HEAD
     localStorage.setItem('Daily confirmed', JSON.stringify(selectedCountryConfirmedDay));
     localStorage.setItem('Daily deaths', JSON.stringify(selectedCountryDeathsDay));
     localStorage.setItem('Daily recovered', JSON.stringify(selectedCountryRecoveredDay));
     localStorage.setItem('Summary confirmed', JSON.stringify(selectedCountryConfirmedCummulative));
     localStorage.setItem('Summary deaths', JSON.stringify(selectedCountryDeathsCummulative));
     localStorage.setItem('Summary recovered', JSON.stringify(selectedCountryRecoveredCummulative));
+=======
+    if (localStorage.getItem('updateDate') === todayUpdate) {
+        localStorage.setItem('currentCountry', 'Global');
+        localStorage.setItem('currentCountryISO3', '');
+        graphBtnExportEvents(3);
+        graphWrapper.classList.remove('loading');
+        return;
+    }
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
 
     localStorage.setItem('Daily confirmed per 100k', JSON.stringify(selectedCountryConfirmedDay100k));
     localStorage.setItem('Daily deaths per 100k', JSON.stringify(selectedCountryDeathsDay100k));
@@ -313,6 +554,7 @@ function buildCountryPanel() {
   }
 }
 
+<<<<<<< HEAD
 (async function getGlobalData() {
   const date = new Date();
   const todayUpdate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
@@ -358,6 +600,11 @@ function buildCountryPanel() {
       globalDeathsDay.push(globalDeathsDayCalc >= 0 ? globalDeathsDayCalc : 0);
       const globalRecoveredDayCalc = globalRecoveredCummulative[idx] - globalRecoveredCummulative[idx - 1];
       globalRecoveredDay.push(globalRecoveredDayCalc >= 0 ? globalRecoveredDayCalc : 0);
+=======
+    if (localStorage.getItem('All country list') && (localStorage.getItem('updateDate') === todayUpdate)) {
+        buildCountryPanel();
+        return;
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
     }
   }
 
@@ -397,8 +644,40 @@ function buildCountryPanel() {
   const date = new Date();
   const todayUpdate = `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`;
 
+<<<<<<< HEAD
   if (localStorage.getItem('All country list') && (localStorage.getItem('updateDate') === todayUpdate)) {
     //
+=======
+    const response  = await fetch(`https://disease.sh/v3/covid-19/countries?yesterday=false&twoDaysAgo=false`);
+    const countryNamesArray  = (await response.json()).filter(e => excludeCountries.indexOf(e.countryInfo.iso3) === - 1);
+
+    allCountriesFinalArray = new Array((await countryNamesArray).length);
+
+    for (let index = 0; index < allCountriesFinalArray.length; index += 1) {
+
+        allCountriesFinalArray[index] = {};
+        allCountriesFinalArray[index].cases = countryNamesArray[index].cases;
+        allCountriesFinalArray[index].casesPer100k = (countryNamesArray[index].casesPerOneMillion / 10).toFixed(2);
+        allCountriesFinalArray[index].deaths = countryNamesArray[index].deaths;
+        allCountriesFinalArray[index].deathsPer100k = (countryNamesArray[index].deathsPerOneMillion / 10).toFixed(2);
+        allCountriesFinalArray[index].recovered = countryNamesArray[index].recovered;
+        allCountriesFinalArray[index].recoveredPer100k = (countryNamesArray[index].recoveredPerOneMillion / 10).toFixed(2);
+        allCountriesFinalArray[index].todayCases = countryNamesArray[index].todayCases;
+        allCountriesFinalArray[index].todayDeaths = countryNamesArray[index].todayDeaths;
+        allCountriesFinalArray[index].todayRecovered = countryNamesArray[index].todayRecovered;
+
+        allCountriesFinalArray[index].todayCases100k = ((countryNamesArray[index].todayCases / countryNamesArray[index].population) * 100000).toFixed(3);
+        allCountriesFinalArray[index].todayDeaths100k = ((countryNamesArray[index].todayDeaths / countryNamesArray[index].population) * 100000).toFixed(3);
+        allCountriesFinalArray[index].todayRecovered100k = ((countryNamesArray[index].todayRecovered / countryNamesArray[index].population) * 100000).toFixed(3);
+        allCountriesFinalArray[index].iso2 = countryNamesArray[index].countryInfo.iso2;
+        allCountriesFinalArray[index].iso3 = countryNamesArray[index].countryInfo.iso3;
+        allCountriesFinalArray[index].country = countryNamesArray[index].country;
+        allCountriesFinalArray[index].population = countryNamesArray[index].population;
+    }
+    
+    localStorage.setItem('All country list final', JSON.stringify(allCountriesFinalArray));
+    localStorage.setItem('All country list', JSON.stringify(countryNamesArray));
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
     buildCountryPanel();
     return;
   }
@@ -416,6 +695,7 @@ function buildCountryPanel() {
 
 // -----------------------filter field logic -----------------------------------
 
+<<<<<<< HEAD
 let searchFieldArray;
 filterField.addEventListener('input', (event) => {
   searchFieldArray = [];
@@ -435,6 +715,28 @@ filterField.addEventListener('input', (event) => {
       }
       options[i].removeAttribute('filtered');
       options[i].style.display = 'block';
+=======
+let searchFieldArray; 
+filterField.addEventListener("input", (event) => {
+    searchFieldArray = [];
+    const searchString = event.target.value; 
+    const options = countriesList.childNodes; 
+    for (let i = 0; i < options.length; i += 1) {
+        const regex = new RegExp(`^${  searchString}`, "i");
+        const match =  options[i].children[1].textContent.match(regex);
+
+        if (!match ) {
+            options[i].style.display = 'none';
+            options[i].setAttribute('filtered', 'yes');
+        } else {
+            if (searchString) {
+                const obj = allCountriesFinalArray.find(element => element.country === options[i].children[1].textContent);
+                searchFieldArray.push(obj);
+            }
+            options[i].removeAttribute('filtered');
+            options[i].style.display = 'block';
+        }
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
     }
   }
 });
@@ -615,6 +917,11 @@ filterField.addEventListener('input', (event) => {
 //     }
 // })
 
+<<<<<<< HEAD
 // export default summarySelectedCountryData;
+=======
+
+export default sortBtsEvent;
+>>>>>>> 16daebba176c7a9c3cb4c6cfd2c2afecf75baac8
 
 // var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen; console.log(_x.substr(0,50)+" = "+ (_xLen/1024).toFixed(2)+" KB")};console.log("Total = " + (_lsTotal / 1024).toFixed(2) + " KB");
