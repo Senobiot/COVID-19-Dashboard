@@ -27,14 +27,14 @@ export default class CreateStatistics {
     this.currentProperty.innerText = `${current}`;
     this.currentData = CreateStatistics.createDomElement('div', 'current__data');
     this.currentData.style.color = '#675D04';
-    const iconCountry = CreateStatistics.createDomElement('img', 'statistics__icon');
-    iconCountry.src = `${srcImg}`;
+    this.iconCountry = CreateStatistics.createDomElement('img', 'statistics__icon');
+    this.iconCountry.src = `${srcImg}`;
     const currentRegion = CreateStatistics.createDomElement('div', 'current__region');
-    const currentText = CreateStatistics.createDomElement('div', 'current__text');
-    currentText.innerText = `${title}`;
+    this.currentText = CreateStatistics.createDomElement('div', 'current__text');
+    this.currentText.innerText = `${title}`;
     const currentStatistics = CreateStatistics.createDomElement('div', 'current__statistics');
-    currentRegion.append(iconCountry);
-    currentRegion.append(currentText);
+    currentRegion.append(this.iconCountry);
+    currentRegion.append(this.currentText);
     currentStatistics.append(this.currentProperty);
     currentStatistics.append(this.currentData);
     currentStatistics.append(currentRegion);
@@ -73,7 +73,7 @@ export default class CreateStatistics {
   generateSwitch() {
     const wrapperSwitch = CreateStatistics.createDomElement('div', 'wrapper-switch');
     const switchTotal = CreateStatistics.createDomElement('div', 'switch__total');
-    switchTotal.innerText = 'Absolute';
+    switchTotal.innerText = 'All people';
     const switchPopulation = CreateStatistics.createDomElement('div', 'switch__population');
     switchPopulation.innerText = 'Per 100 thousand population';
     this.switchToggle = CreateStatistics.createDomElement('div', 'switch__statistics');
@@ -100,6 +100,11 @@ export default class CreateStatistics {
     } else if (str.includes('recovered')) {
       this.currentData.style.color = '#1B481B';
     }
+  }
+
+  setCurrentCountry(isoCountry, country) {
+    this.iconCountry.src = `https://www.countryflags.io/${isoCountry}/shiny/64.png`;
+    this.currentText.innerText = country;
   }
 
   setCurrentData(index) {

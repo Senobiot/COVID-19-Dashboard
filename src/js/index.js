@@ -11,7 +11,8 @@ import '../../node_modules/leaflet/dist/leaflet';
 import Chart from '../../node_modules/chart.js/dist/Chart';
 import './header';
 import './table_total';
-import './country_panel.js';
+import sortBtsEvent from './country_panel.js';
+import { graphBtnExportEvents } from './graph';
 import './map';
 
 // import '../css/style_map.scss';
@@ -22,17 +23,21 @@ let todayData = '';
 let dataCurrentCountry = '';
 let population = '';
 const statistics = new CreateStatistics(document.body);
-let isTotal = false;
+let isTotal = false; // Флаг выбора расчета показателей на все население или 100К
 
 const getDataCurrentCountry = async (country) => {
   const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=false&twoDaysAgo=false&strict=true`);
   dataCurrentCountry = await response.json();
 };
 
-const createStatisticsCurrentCountry = async (country) => {
-  await getDataCurrentCountry(country);
+const createStatisticsCurrentCountry = async (iso2Country) => {
+  await getDataCurrentCountry(iso2Country);
   population = dataCurrentCountry.population;
+  const { country } = dataCurrentCountry;
   statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
+  const dataIndex = Number(statistics.switchToggle.dataset.index);
+  statistics.setCurrentData(dataIndex);
+  statistics.setCurrentCountry(iso2Country, country);
 };
 
 // Получаем total статистику
@@ -54,6 +59,8 @@ const addHandlerClickStatistics = () => {
       }
       const dataKey = currentLi.dataset.key;
       const dataIndex = Number(currentLi.dataset.index);
+      sortBtsEvent(dataIndex);
+      graphBtnExportEvents(dataIndex);
       statistics.setCurrentProperty(dataKey, dataIndex);
       statistics.switchToggle.dataset.index = dataIndex;
     } else if (item.tagName === 'INPUT') {
@@ -62,11 +69,13 @@ const addHandlerClickStatistics = () => {
         isTotal = false;
         statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
         if (dataIndex > 5) dataIndex -= 6;
+        statistics.switchToggle.dataset.index = dataIndex;
         statistics.setCurrentData(dataIndex);
       } else {
         isTotal = true;
         statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
         if (dataIndex < 6) dataIndex += 6;
+        statistics.switchToggle.dataset.index = dataIndex;
         statistics.setCurrentData(dataIndex);
       }
     }
@@ -88,4 +97,5 @@ const initApp = async () => {
   addHandlerClickStatistics();
 };
 initApp();
-createStatisticsCurrentCountry('BLR');
+createStatisticsCurrentCountry('BY');
+export default createStatisticsCurrentCountry;
