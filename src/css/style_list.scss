@@ -233,6 +233,7 @@ $font_2: 'Rubik', sans-serif;
     }
 }
 .country {
+    display: flex;
     padding: 6px 10px 6px 50px;
     width: 100%;
     margin-bottom: 3px;
@@ -258,7 +259,7 @@ $font_2: 'Rubik', sans-serif;
 }
 .optionValue {
     display: inline-block;
-    width: 30%;
+    width: 33%;
     color: #842727;
 }
 .optionCountryName {
