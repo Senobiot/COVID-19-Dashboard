@@ -8,8 +8,13 @@ export default class WorldMap {
 
   };
   handleClick(e) {
-    
-
+    console.log(e.target);
+   
+    const lat = e.target.dataset.lat;
+    const long = e.target.dataset.long;
+    if (lat && long) {
+      this.changeView(lat, long);
+    }
   }
   generateLayout(wInfo, cInfo) {
     this.mapWrapper = document.createElement('div');
@@ -28,7 +33,7 @@ export default class WorldMap {
     this.countriesInfo = cInfo;
     this.worldInfo = wInfo;
     this.generateMarkers();
-    this.mapWrapper.addEventListener('click', this.handleClick);
+    this.mapWrapper.addEventListener('click', this.handleClick.bind(this));
   };
   generateMarkers() {
     console.log(this.countriesInfo[0]);
@@ -39,7 +44,7 @@ export default class WorldMap {
     });
   };
   createMarker(lat, long, country, elClass, iso2, iso3, cases, deaths, recovered) {
-    const element = `<span class="icon-marker ${elClass}" data-iso2=${iso2} data-iso3=${iso3}>
+    const element = `<span class="icon-marker ${elClass}" data-iso2=${iso2} data-iso3=${iso3} data-lat=${lat} data-long=${long}>
       <span class="icon-marker-tooltip">
         <h2>${country}</h2>
         <ul>
@@ -62,8 +67,8 @@ export default class WorldMap {
     marker.addTo(this.map);
     marker.bindPopup(`${country, cases}`);
   };
-  changeZoom() {
-
+  changeView(lat, long) {
+    this.map.flyTo([lat, long], 5);
   };
   showInfo() {
 
