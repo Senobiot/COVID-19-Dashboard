@@ -2,10 +2,15 @@ export default class WorldMap {
   constructor() {
     this.worldInfo;
     this.countriesInfo;
+    this.borderValues;
   };
   renderMap(obj) {
 
   };
+  handleClick(e) {
+    
+
+  }
   generateLayout(wInfo, cInfo) {
     this.mapWrapper = document.createElement('div');
     this.mapWrapper.id = 'map';
@@ -23,16 +28,18 @@ export default class WorldMap {
     this.countriesInfo = cInfo;
     this.worldInfo = wInfo;
     this.generateMarkers();
+    this.mapWrapper.addEventListener('click', this.handleClick);
   };
   generateMarkers() {
     console.log(this.countriesInfo[0]);
-    console.log(this.countriesInfo);
+    this.borderValues = this.countBorderlineValues('cases', this.countriesInfo);
     this.countriesInfo.forEach(el => {
-      this.createMarker(el.countryInfo.lat, el.countryInfo.long, el.country, el.countryInfo.iso2, el.countryInfo.iso3, el.cases, el.deaths, el.recovered);
+      const elClass = this.countMarkerClass(el.cases, this.borderValues);
+      this.createMarker(el.countryInfo.lat, el.countryInfo.long, el.country, elClass, el.countryInfo.iso2, el.countryInfo.iso3, el.cases, el.deaths, el.recovered);
     });
   };
-  createMarker(lat, long, country, iso2, iso3, cases, deaths, recovered) {
-    const element = `<span class="icon-marker" data-iso2=${iso2} data-iso3=${iso3}>
+  createMarker(lat, long, country, elClass, iso2, iso3, cases, deaths, recovered) {
+    const element = `<span class="icon-marker ${elClass}" data-iso2=${iso2} data-iso3=${iso3}>
       <span class="icon-marker-tooltip">
         <h2>${country}</h2>
         <ul>
@@ -44,6 +51,7 @@ export default class WorldMap {
     </span>`;
     const myIcon = L.divIcon({
       html: element,
+      iconSize: [20, 20],
       className: 'map-marker'
     });
     const markerOptions = {
@@ -52,7 +60,7 @@ export default class WorldMap {
     };
     const marker = new L.Marker([lat, long], markerOptions);
     marker.addTo(this.map);
-    marker.bindPopup(`${country, cases}`).openPopup();
+    marker.bindPopup(`${country, cases}`);
   };
   changeZoom() {
 
@@ -62,5 +70,32 @@ export default class WorldMap {
   };
   hideInfo() {
 
+  };
+  countBorderlineValues(param, cInfo) {
+    let arr = [];
+    cInfo.forEach((val) => {
+      arr.push(val[param]);
+    });
+    arr.sort((a, b) => a - b);
+    console.log(arr);
+    arr.splice(arr.length - 4);
+    arr.splice(1, arr.length - 2);
+    return arr;
+  };
+  countMarkerClass(param, borderVal) {
+    const max = borderVal[1];
+    const min = borderVal[0];
+    const interval = (max - min) / 5;
+    if (param >= max - interval) {
+      return 'icon-size-xl';
+    } else if (param <= max - interval && param >= max - (interval * 2)) {
+      return 'icon-size-l';
+    } else if (param <= max - (interval * 2) && param >= max - (interval * 3)) {
+      return 'icon-size-m';
+    } else if (param <= max - (interval * 3) && param >= max - (interval * 4)) {
+      return 'icon-size-s';
+    } else if (param <= max - (interval * 4) && param >= min) {
+      return 'icon-size-xs';
+    }
   };
 }
