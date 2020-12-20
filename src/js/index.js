@@ -57,11 +57,10 @@ const addHandlerClickStatistics = () => {
       } else if (item.tagName === 'LI') {
         currentLi = item;
       }
-      const dataKey = currentLi.dataset.key;
       const dataIndex = Number(currentLi.dataset.index);
       sortBtsEvent(dataIndex);
       graphBtnExportEvents(dataIndex);
-      statistics.setCurrentProperty(dataKey, dataIndex);
+      statistics.setCurrentProperty(dataIndex);
       statistics.switchToggle.dataset.index = dataIndex;
     } else if (item.tagName === 'INPUT') {
       let dataIndex = Number(item.closest('.switch__statistics').dataset.index);
@@ -82,6 +81,16 @@ const addHandlerClickStatistics = () => {
   });
 };
 
+const statisticsExportEvents = (index) => {
+  if (index > 5) {
+    isTotal = true;
+  } else {
+    isTotal = false;
+  }
+  statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
+  statistics.switchToggleExportEvent(index);
+};
+
 const createStatisticsFirstOnload = () => {
   const country = 'GLOBAL';
   const srcIconCountry = './img/world.png';
@@ -98,4 +107,5 @@ const initApp = async () => {
 };
 initApp();
 createStatisticsCurrentCountry('BY');
-export default createStatisticsCurrentCountry;
+
+export { createStatisticsCurrentCountry, statisticsExportEvents };

@@ -1,6 +1,4 @@
 import { graphWrapper, graphBtnExportEvents } from './graph';
-import CreateStatistics from './table-statistics';
-import createStatisticsCurrentCountry from './index';
 
 const countriesModule = document.createElement('div');
 countriesModule.classList.add('countriesModule');
@@ -194,8 +192,6 @@ function countryListDisactive() {
 }
 
 async function getCurrentCountryData() {
-  createStatisticsCurrentCountry(this.dataset.iso2);
-  console.log(this);
   if (localStorage.getItem('currentCountryISO3') !== this.getAttribute('data-iso3')) {
     countryListDisactive();
     this.classList.add('active');

@@ -85,21 +85,30 @@ export default class CreateStatistics {
     this.wrapperTable.append(wrapperSwitch);
   }
 
-  setCurrentProperty(key, index) {
+  setCurrentProperty(index) {
     this.currentData.innerText = String(this.arraryData[index]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
     let indexProperty = index;
     if (index > 5) {
       indexProperty = index - 6;
     }
     this.currentProperty.innerText = this.properties[indexProperty];
-    const str = key.toLowerCase();
-    if (str.includes('cases')) {
+    if (index % 3 === 0 || index === 0) {
       this.currentData.style.color = '#675D04';
-    } else if (str.includes('deaths')) {
+    } else if ((index - 1) % 3 === 0 || index === 1) {
       this.currentData.style.color = '#84272F';
-    } else if (str.includes('recovered')) {
+    } else if ((index - 2) % 3 === 0 || index === 2) {
       this.currentData.style.color = '#1B481B';
     }
+  }
+
+  switchToggleExportEvent(index) {
+    const checkbox = this.switchToggle.querySelector('input');
+    if (index > 5) {
+      checkbox.checked = false;
+    } else {
+      checkbox.checked = true;
+    }
+    this.setCurrentProperty(index);
   }
 
   setCurrentCountry(isoCountry, country) {
