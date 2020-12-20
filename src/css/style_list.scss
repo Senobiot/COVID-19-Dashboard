@@ -10,13 +10,49 @@ $font_2: 'Rubik', sans-serif;
     left: 0;
     width: 20%;
     height: 60%;
-    padding: 0 10px;
+    padding: 28px 10px;
     box-shadow: inset 0 0 10px;
     background-color: rgba(35,35,3, 0.2);
-    border-radius: 5px;
+    border-radius: 5px 5px 5px 0;
+    transition: 0.5s;
     // grid-area: 3 / 1 / 5 / 2;
+    &.fullscreen {
+        width: 100%;
+        height: 100%;
+        z-index: 50;
+        font-size: 42px;
+        left: 0; 
+        top: 0;
+        background-color: #b3b8ab;  
+    }
+}
+.fullScreenCountreisBtn {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    background: url('../img/fullscreen.png') 50%/cover no-repeat;
+    transition: 1s;
+    @keyframes fullscreenBtnAnimation {
+        50%{transform : scale(0.6)}
+    }
+    &:hover {
+        animation: fullscreenBtnAnimation 1s linear infinite;
+    }
 }
 
+.searchWrapper {
+    height: 30px;
+    width: 100%;
+    margin-bottom: 5px;
+    position: relative;
+    &.fullscreen {
+        width: 30%;
+        left: 35%;
+    }
+}
 .countriesSearchField {
     height: 30px;
     width: 100%;
@@ -32,15 +68,49 @@ $font_2: 'Rubik', sans-serif;
     border-radius: 3px;
     margin-bottom: 5px;
 }
-
+.countriesSearchFieldResults {
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    max-height: 100px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: #b6bbaf;
+}
+.searchFieldResult {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    background: dimgray;
+    color: floralwhite;
+    font-size: 12px;
+    text-transform: uppercase;
+    transition: 0.3s;
+    cursor: pointer;
+    line-height: 1.5;
+    border-radius: 3px;
+    margin-bottom: 3px;
+    padding-left: 5px;
+    &:hover {
+        background-color: palegoldenrod;
+        color: dimgray;
+        font-weight: 700;
+    }
+    &:active {
+        transform: translate(2px, 2px);
+    }
+}
 .sortCountryListBtnsWrapper {
     font-size: 18px;
     font-weight: 700;
     display: flex;
     justify-content: space-around;
-     padding: 5px 0;
-    // margin-bottom: 10px;
+    padding: 5px 0;
     height: 90px;
+    &.fullscreen {
+        width: 30%;
+        margin: 0 auto;
+    }
 }
 
 .sortCountryListBtnsSubWrapper {
@@ -49,6 +119,9 @@ $font_2: 'Rubik', sans-serif;
     justify-content: space-between;
     align-items: center;
     width: 80%;
+    &.fullscreen {
+        width: 88%;
+    }
 }
 .sortCountryListBtnsSwitcher {
     // height: 90%;
@@ -69,7 +142,6 @@ $font_2: 'Rubik', sans-serif;
     text-transform: uppercase;
     font-weight: 700;
     font-size: 10px;
-
 	&:focus {
 		outline: none;
     }
@@ -102,7 +174,10 @@ $font_2: 'Rubik', sans-serif;
 			top: 80%;
 			box-shadow: -1px 0 5px -1px rgba(0, 0, 0, 0.2);
 		}
-	}
+    }
+    &.fullscreen {
+        width: 63px;
+    }
 }
 
 .sortCountryListBtn {
@@ -145,38 +220,17 @@ $font_2: 'Rubik', sans-serif;
     &.hidden {
         display: none;
     }
-    &[sorted="forward"], &[sorted="reverse"] {
-        position: relative;
-        background-color: #488f8f;
-        box-shadow: inset 0 0 10px;
-        background-color: rgba(35,35,3, 0.8);
-        &:after {
-            content: '\2B9B';
-            position: absolute;
-            display: flex;
-            align-items: center;
-            height: 100%;
-            right: 10px;
-            top: 0;
-        }
-    }
-    &[sorted="reverse"] {
-        &:after {
-            content: '\2B99';
-        }
-    }
-    &[sortedPast ="yes"] {
-        background-color: #842727;
-        &:after {
-            content: '';
-        }
-    }
 }
 
 .countriesList {
-    height: 70%;
+    height: 77%;
     overflow-y: scroll;
     width: 100%;
+    &.fullscreen {
+        width: 30%;
+        height: 88%;
+        margin: 0 auto;
+    }
 }
 .country {
     padding: 6px 10px 6px 50px;
@@ -211,12 +265,3 @@ $font_2: 'Rubik', sans-serif;
     display: inline-block;
     text-align: left;
 }
-// .country:hover {
-//     cursor: pointer;
-//     color: white;
-//     box-shadow: inset 0 0 10px;
-//     background-color: rgba(35,35,3, 0.8);
-//     span:first-child {
-//         color: white;
-//     }
-// }
