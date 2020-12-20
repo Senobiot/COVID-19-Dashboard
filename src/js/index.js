@@ -68,15 +68,13 @@ const addHandlerClickStatistics = () => {
         isTotal = false;
         statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
         if (dataIndex > 5) dataIndex -= 6;
-        statistics.switchToggle.dataset.index = dataIndex;
-        statistics.setCurrentData(dataIndex);
       } else {
         isTotal = true;
         statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
         if (dataIndex < 6) dataIndex += 6;
-        statistics.switchToggle.dataset.index = dataIndex;
-        statistics.setCurrentData(dataIndex);
       }
+      statistics.switchToggle.dataset.index = dataIndex;
+      statistics.setCurrentData(dataIndex);
     }
   });
 };
@@ -96,16 +94,17 @@ const createStatisticsFirstOnload = () => {
   const srcIconCountry = './img/world.png';
   const currentProperty = 'Confirmed';
   statistics.createTableStatistics(srcIconCountry, country, currentProperty);
+  statistics.createContinents();
 };
 
 // Инициализация приложения
 const initApp = async () => {
   createStatisticsFirstOnload();
   await getTotalData();
+  statistics.getTotalDataContinents();
   statistics.generateListStatistics(todayData, 7793895016, isTotal);
   addHandlerClickStatistics();
 };
 initApp();
-createStatisticsCurrentCountry('BY');
 
 export { createStatisticsCurrentCountry, statisticsExportEvents };

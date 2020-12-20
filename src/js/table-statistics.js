@@ -64,7 +64,8 @@ export default class CreateStatistics {
       const li = CreateStatistics.createDomElement('li', 'item__statistics');
       li.dataset.key = `${this.dataAttributes[index]}`;
       li.dataset.index = index + additionalNumber;
-      li.innerHTML = `<span>${element}</span><span class="property">${this.arraryData[index + additionalNumber]}</span>`;
+      const text = String(this.arraryData[index + additionalNumber]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+      li.innerHTML = `<span>${element}</span><span class="property">${text}</span>`;
       this.list.append(li);
     });
     this.statisticsContent.append(this.list);
@@ -118,6 +119,20 @@ export default class CreateStatistics {
 
   setCurrentData(index) {
     this.currentData.innerText = String(this.arraryData[index]).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
+  }
+
+  async getTotalDataContinents() {
+    const response = await fetch('https://disease.sh/v3/covid-19/continents?yesterday=false&twoDaysAgo=false');
+    this.totalDataContinents = await response.json();
+    console.log(this.totalDataContinents);
+  }
+
+  createContinents() {
+    const wrapperContinents = CreateStatistics.createDomElement('div', 'wrapper-continents');
+    const title = CreateStatistics.createDomElement('div', 'continets__title');
+    title.innerHTML = '<h3>CONTINENTS</h3>';
+    wrapperContinents.append(title);
+    this.body.append(wrapperContinents);
   }
 
   static createDomElement(element, ...className) {
