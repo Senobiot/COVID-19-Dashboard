@@ -1,4 +1,4 @@
-import sortBtsEvent from './country_panel';
+import Chart from '../../node_modules/chart.js/dist/Chart';
 
 const graphConfig = {
   type: 'bar',
@@ -10,7 +10,6 @@ const graphConfig = {
       data: [],
       backgroundColor: '#675d04',
       borderColor: '#675d04',
-      // borderWidth: 1
     }],
   },
   options: {
@@ -75,7 +74,7 @@ const myChart = new Chart(ctx, graphConfig);
 for (let i = 1; i <= 12; i += 1) {
   const graphControlPanelCaseBtn = document.createElement('button');
   graphControlPanelCaseBtn.classList.add('graphDataBtn');
-  if (i < 4 || i > 6 && i < 10) {
+  if ((i < 4 || i > 6) && i < 10) {
     graphControlPanelCaseBtn.textContent = 'Daily';
   } else {
     graphControlPanelCaseBtn.textContent = 'Summary';
@@ -153,7 +152,6 @@ for (let index = 0; index < graphControlPanel.childNodes.length; index += 1) {
   graphControlPanel.children[index].addEventListener('click', graphBtsEvent);
   graphControlPanel.children[index].addEventListener('click', () => {
     localStorage.setItem('currentDataNumber', index);
-    sortBtsEvent(index);
   });
 }
 
@@ -190,4 +188,4 @@ graphControlPanelDataBtn.addEventListener('click', function clickGraphControlPan
   }
 });
 
-export { graphWrapper, graphBtnExportEvents };
+export { graphWrapper, graphBtnExportEvents, graphControlPanel };
