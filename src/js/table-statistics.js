@@ -48,6 +48,7 @@ export default class CreateStatistics {
   }
 
   generateListStatistics(data, population, isTotal) {
+    console.log(data, population, isTotal);
     let additionalNumber = 0;
     if (isTotal) {
       additionalNumber = 6;

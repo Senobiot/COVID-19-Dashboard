@@ -20,7 +20,7 @@ import CreateStatistics from './table-statistics';
 
 let todayData = '';
 let dataCurrentCountry = '';
-let population = '';
+let population = 7793895016;
 const statistics = new CreateStatistics(document.body);
 let isTotal = false; // Флаг выбора расчета показателей на все население или 100К
 
@@ -65,11 +65,13 @@ const addHandlerClickStatistics = () => {
       let dataIndex = Number(item.closest('.switch__statistics').dataset.index);
       if (isTotal) {
         isTotal = false;
-        statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
+
+        statistics.generateListStatistics(todayData, Number(population), isTotal);
         if (dataIndex > 5) dataIndex -= 6;
       } else {
         isTotal = true;
-        statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
+
+        statistics.generateListStatistics(todayData, Number(population), isTotal);
         if (dataIndex < 6) dataIndex += 6;
       }
       statistics.switchToggle.dataset.index = dataIndex;
@@ -93,7 +95,6 @@ const createStatisticsFirstOnload = () => {
   const srcIconCountry = './img/world.png';
   const currentProperty = 'Confirmed';
   statistics.createTableStatistics(srcIconCountry, country, currentProperty);
-  statistics.createContinents();
 };
 
 // Инициализация приложения
@@ -101,7 +102,7 @@ const initApp = async () => {
   createStatisticsFirstOnload();
   await getTotalData();
   statistics.getTotalDataContinents();
-  statistics.generateListStatistics(todayData, 7793895016, isTotal);
+  statistics.generateListStatistics(todayData, population, isTotal);
   addHandlerClickStatistics();
 };
 initApp();
