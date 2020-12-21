@@ -5,6 +5,11 @@ export default class CreateStatistics {
     this.wrapperTable = '';
     this.properties = ['Daily Cases', 'Daily Deaths', 'Daily Recovered', 'Summary Confirmed', 'Summary Deaths', 'Summary Recovered'];
     this.dataAttributes = ['todayCases', 'todayDeaths', 'todayRecovered', 'cases', 'deaths', 'recovered'];
+    this.arrayContinents = ['N. America', 'Asia', 'S. America', 'Europe', 'Africa', 'Australia'];
+  }
+
+  static transformNumbers(number) {
+    return String(number).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '$1 ');
   }
 
   createTableStatistics(srcImg, title, current) {
@@ -16,10 +21,19 @@ export default class CreateStatistics {
   generateTableStatistics(srcImg, title, current) {
     this.statisticsContent = CreateStatistics.createDomElement('div', 'statistics__content');
     const headerStatistics = CreateStatistics.createDomElement('div', 'statistics__header');
+    const subTitle = CreateStatistics.createDomElement('div', 'statistics__subtitle');
+    subTitle.innerHTML = '<div class="statistics__region"><h3>Current region</h3></div><div class="statistics__continents"><h3>Continents</h3></div>';
     headerStatistics.innerText = 'STATISTICS';
+    this.continents = CreateStatistics.createDomElement('div', 'continents');
     this.wrapperTable.append(headerStatistics);
+    this.wrapperTable.append(subTitle);
     this.wrapperTable.append(this.statisticsContent);
+    this.statisticsContent.append(this.continents);
     this.generateCurrentStatistics(current, srcImg, title);
+    this.createFullScreen();
+    this.fullScreen.addEventListener('click', () => {
+      this.wrapperTable.classList.toggle('fullScreen');
+    });
   }
 
   generateCurrentStatistics(current, srcImg, title) {
@@ -44,11 +58,10 @@ export default class CreateStatistics {
 
   static getPerPopulation(data, population) {
     const countThousands = population / 100000;
-    return Number((data / countThousands).toFixed(3));
+    return Number((data / countThousands).toFixed(2));
   }
 
   generateListStatistics(data, population, isTotal) {
-    // console.log(data, population, isTotal);
     let additionalNumber = 0;
     if (isTotal) {
       additionalNumber = 6;
@@ -74,16 +87,12 @@ export default class CreateStatistics {
 
   generateSwitch() {
     const wrapperSwitch = CreateStatistics.createDomElement('div', 'wrapper-switch');
-    const switchTotal = CreateStatistics.createDomElement('div', 'switch__total');
-    switchTotal.innerText = 'All people';
-    const switchPopulation = CreateStatistics.createDomElement('div', 'switch__population');
-    switchPopulation.innerText = 'Per 100 thousand population';
     this.switchToggle = CreateStatistics.createDomElement('div', 'switch__statistics');
-    this.switchToggle.innerHTML = '<input checked class="graphSwitcherType" type="checkbox">';
+    this.switchToggle.innerHTML = '<input class="graphSwitcherData" type="checkbox">';
     this.switchToggle.dataset.index = 3;
-    wrapperSwitch.append(switchTotal);
+
     wrapperSwitch.append(this.switchToggle);
-    wrapperSwitch.append(switchPopulation);
+
     this.wrapperTable.append(wrapperSwitch);
   }
 
@@ -125,15 +134,40 @@ export default class CreateStatistics {
   async getTotalDataContinents() {
     const response = await fetch('https://disease.sh/v3/covid-19/continents?yesterday=false&twoDaysAgo=false');
     this.totalDataContinents = await response.json();
-    // console.log(this.totalDataContinents);
   }
 
-  createContinents() {
-    const wrapperContinents = CreateStatistics.createDomElement('div', 'wrapper-continents');
-    const title = CreateStatistics.createDomElement('div', 'continets__title');
-    title.innerHTML = '<h3>CONTINENTS</h3>';
-    wrapperContinents.append(title);
-    this.body.append(wrapperContinents);
+  async createContinents() {
+    await this.getTotalDataContinents();
+    this.totalDataContinents.forEach((element, index) => {
+      const ul = CreateStatistics.createDomElement('ul', 'list-continent');
+      const liRegion = CreateStatistics.createDomElement('li', 'item__region');
+      liRegion.innerText = this.arrayContinents[index];
+      const liDailyCases = CreateStatistics.createDomElement('li', 'color__confirmed');
+      liDailyCases.innerText = CreateStatistics.transformNumbers(element.todayCases);
+      const liDailyDeaths = CreateStatistics.createDomElement('li', 'color__deaths');
+      liDailyDeaths.innerText = CreateStatistics.transformNumbers(element.todayDeaths);
+      const liDailyRecovered = CreateStatistics.createDomElement('li', 'color__recovered');
+      liDailyRecovered.innerText = CreateStatistics.transformNumbers(element.todayRecovered);
+      const liSumConfirmed = CreateStatistics.createDomElement('li', 'color__confirmed');
+      liSumConfirmed.innerText = CreateStatistics.transformNumbers(element.cases);
+      const liSumDeaths = CreateStatistics.createDomElement('li', 'color__deaths');
+      liSumDeaths.innerText = CreateStatistics.transformNumbers(element.deaths);
+      const liSumRecovered = CreateStatistics.createDomElement('li', 'color__recovered');
+      liSumRecovered.innerText = CreateStatistics.transformNumbers(element.recovered);
+      ul.append(liRegion);
+      ul.append(liDailyCases);
+      ul.append(liDailyDeaths);
+      ul.append(liDailyRecovered);
+      ul.append(liSumConfirmed);
+      ul.append(liSumDeaths);
+      ul.append(liSumRecovered);
+      this.continents.append(ul);
+    });
+  }
+
+  createFullScreen() {
+    this.fullScreen = CreateStatistics.createDomElement('div', 'fullScreenGraph');
+    this.wrapperTable.append(this.fullScreen);
   }
 
   static createDomElement(element, ...className) {

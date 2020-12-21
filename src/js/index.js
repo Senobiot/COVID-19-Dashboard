@@ -65,12 +65,10 @@ const addHandlerClickStatistics = () => {
       let dataIndex = Number(item.closest('.switch__statistics').dataset.index);
       if (isTotal) {
         isTotal = false;
-
         statistics.generateListStatistics(todayData, Number(population), isTotal);
         if (dataIndex > 5) dataIndex -= 6;
       } else {
         isTotal = true;
-
         statistics.generateListStatistics(todayData, Number(population), isTotal);
         if (dataIndex < 6) dataIndex += 6;
       }
@@ -101,7 +99,7 @@ const createStatisticsFirstOnload = () => {
 const initApp = async () => {
   createStatisticsFirstOnload();
   await getTotalData();
-  statistics.getTotalDataContinents();
+  statistics.createContinents();
   statistics.generateListStatistics(todayData, population, isTotal);
   addHandlerClickStatistics();
 };
