@@ -5,18 +5,41 @@
   background-color: rgba(35, 35, 3, 0.2);
   position: absolute;
   top: calc(5% + 2px);
-  left: 52%;
+  left: 51.4%;
   border-radius: 5px;
   color: rgba(0, 0, 0, 0.6);
   font-weight: 700;
   box-sizing: border-box;
-  min-width: 500px;
-  min-height: 276px;
+  transition: 0.5s;
+  min-height: 312px;
+  &.fullScreen {
+    width: 100%;
+    height: 95%;
+    z-index: 50;
+
+    background-color: #b3b8ab;
+    left: 0;
+    .statistics__content {
+      justify-content: space-around;
+      max-width: 1190px;
+      margin: 0 auto;
+    }
+    .statistics__subtitle {
+      max-width: 1110px;
+      margin: 30px auto;
+    }
+    .item__statistics {
+      font-size: 2rem;
+    }
+    .list-continent {
+      font-size: 2rem;
+    }
+  }
 }
+
 .statistics__header {
   text-align: center;
   font-size: 2.4rem;
-  margin-bottom: 10px;
 }
 .statistics__current {
   font-size: 2rem;
@@ -30,6 +53,7 @@
   display: flex;
   white-space: nowrap;
   justify-content: center;
+  column-gap: 8px;
 }
 .statistics__icon {
   width: 64px;
@@ -45,15 +69,7 @@
 .current__region {
   margin-top: 15px;
 }
-.count__confirmed {
-  color: #675d04;
-}
-.count__deaths {
-  color: #842727;
-}
-.count__recovered {
-  color: #1b481b;
-}
+
 .statistics__confirmed,
 .statistics__deaths,
 .statistics__recovered {
@@ -63,13 +79,15 @@
 }
 
 .current__data {
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 .current__statistics {
-  width: 180px;
+  width: 140px;
+  margin-top: 20px;
 }
 .list__statistics {
   text-align: left;
+  margin-top: 20px;
 }
 .item__statistics {
   padding: 6px 10px;
@@ -87,7 +105,7 @@
   display: flex;
   justify-content: space-between;
   column-gap: 10px;
-  min-width: 260px;
+  min-width: 248px;
   .property {
     color: #842727;
   }
@@ -103,19 +121,14 @@
 }
 .wrapper-switch {
   display: flex;
-  justify-content: center;
+
   column-gap: 10px;
   margin-top: 15px;
   align-items: center;
-  .graphSwitcherType {
-    position: static;
-    width: 54px;
-    &::before {
-      content: "";
-    }
-    &:after {
-      content: "";
-    }
+  position: absolute;
+  top: -7px;
+  .graphSwitcherData {
+    top: 1px;
   }
 }
 .switch__statistics {
@@ -124,41 +137,38 @@
   width: 50px;
   height: 20px;
 }
-.switch__round {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #696969;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: 34px;
-  &::before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 4px;
-    bottom: 3px;
-    background-color: #fdf8ed;
-    transition: 0.4s;
-    border-radius: 50%;
+.statistics__subtitle {
+  display: flex;
+  display: flex;
+  justify-content: space-around;
+  font-size: 2rem;
+  margin: 10px 0;
+}
+.continents {
+  display: flex;
+  order: 3;
+  min-width: 490px;
+}
+.list-continent {
+  font-size: 1.4rem;
+  border-right: 1px solid black;
+  li {
+    margin-bottom: 17px;
+    padding: 0 4px;
+  }
+  &:last-child {
+    border: none;
+  }
+  .item__region {
+    margin-bottom: 12px;
   }
 }
-.wrapper-continents {
-  padding: 10px;
-  height: 33%;
-  box-shadow: inset 0 0 10px;
-  background-color: rgba(35, 35, 3, 0.2);
-  position: absolute;
-  top: calc(5% + 2px);
-  left: 52%;
-  border-radius: 5px;
-  color: rgba(0, 0, 0, 0.6);
-  font-weight: 700;
-  box-sizing: border-box;
-  min-width: 500px;
-  min-height: 276px;
+.color__confirmed {
+  color: #675d04;
+}
+.color__deaths {
+  color: #842727;
+}
+.color__recovered {
+  color: #1b481b;
 }
