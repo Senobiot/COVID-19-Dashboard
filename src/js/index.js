@@ -18,22 +18,22 @@ import './map';
 import '../css/style_totals.scss';
 import CreateStatistics from './table-statistics';
 
-let todayData = '';
-let dataCurrentCountry = '';
+let dataCurrentRegion = '';
+
 let population = 7793895016;
 const statistics = new CreateStatistics(document.body);
 let isTotal = false; // Флаг выбора расчета показателей на все население или 100К
 
 const getDataCurrentCountry = async (country) => {
   const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=false&twoDaysAgo=false&strict=true`);
-  dataCurrentCountry = await response.json();
+  dataCurrentRegion = await response.json();
 };
 
 const createStatisticsCurrentCountry = async (iso2Country) => {
   await getDataCurrentCountry(iso2Country);
-  population = dataCurrentCountry.population;
-  const { country } = dataCurrentCountry;
-  statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
+  population = dataCurrentRegion.population;
+  const { country } = dataCurrentRegion;
+  statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
   const dataIndex = Number(statistics.switchToggle.dataset.index);
   statistics.setCurrentData(dataIndex);
   statistics.setCurrentCountry(iso2Country, country);
@@ -42,7 +42,7 @@ const createStatisticsCurrentCountry = async (iso2Country) => {
 // Получаем total статистику
 const getTotalData = async () => {
   const response = await fetch('https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false');
-  todayData = await response.json();
+  dataCurrentRegion = await response.json();
 };
 
 // Обрабока клика по таблице статистики
@@ -65,11 +65,11 @@ const addHandlerClickStatistics = () => {
       let dataIndex = Number(item.closest('.switch__statistics').dataset.index);
       if (isTotal) {
         isTotal = false;
-        statistics.generateListStatistics(todayData, Number(population), isTotal);
+        statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
         if (dataIndex > 5) dataIndex -= 6;
       } else {
         isTotal = true;
-        statistics.generateListStatistics(todayData, Number(population), isTotal);
+        statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
         if (dataIndex < 6) dataIndex += 6;
       }
       statistics.switchToggle.dataset.index = dataIndex;
@@ -84,7 +84,7 @@ const statisticsExportEvents = (index) => {
   } else {
     isTotal = false;
   }
-  statistics.generateListStatistics(dataCurrentCountry, Number(population), isTotal);
+  statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
   statistics.switchToggleExportEvent(index);
 };
 
@@ -100,7 +100,7 @@ const initApp = async () => {
   createStatisticsFirstOnload();
   await getTotalData();
   statistics.createContinents();
-  statistics.generateListStatistics(todayData, population, isTotal);
+  statistics.generateListStatistics(dataCurrentRegion, population, isTotal);
   addHandlerClickStatistics();
 };
 initApp();
