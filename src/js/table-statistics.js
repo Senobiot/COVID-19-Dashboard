@@ -62,6 +62,10 @@ export default class CreateStatistics {
   }
 
   generateListStatistics(data, population, isTotal) {
+<<<<<<< HEAD
+=======
+    // console.log(data, population, isTotal);
+>>>>>>> 6c211eff5af906c6f022871633b996e6385b95ab
     let additionalNumber = 0;
     if (isTotal) {
       additionalNumber = 6;
@@ -134,6 +138,10 @@ export default class CreateStatistics {
   async getTotalDataContinents() {
     const response = await fetch('https://disease.sh/v3/covid-19/continents?yesterday=false&twoDaysAgo=false');
     this.totalDataContinents = await response.json();
+<<<<<<< HEAD
+=======
+    // console.log(this.totalDataContinents);
+>>>>>>> 6c211eff5af906c6f022871633b996e6385b95ab
   }
 
   async createContinents() {

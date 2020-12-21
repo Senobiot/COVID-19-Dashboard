@@ -13,7 +13,7 @@ $font_2: 'Rubik', sans-serif;
     position: absolute;
     width: 30%;
     top: calc(5% + 2px);
-    left: 21%;
+    left: calc(20% + 2px);
     height: 33%;
     box-shadow: inset 0 0 10px;
     background-color: #b7bcb1;
@@ -21,6 +21,8 @@ $font_2: 'Rubik', sans-serif;
     flex-direction: column;
     transition: 0.5s;
     font-size: 24px;
+    border-radius: 5px;
+    overflow: hidden;
     &.fullScreen {
         width: 100%;
         height: 95%;
@@ -118,7 +120,9 @@ $font_2: 'Rubik', sans-serif;
 }
 
 .chartjs-render-monitor, .chartjs-size-monitor {
+    width: 99% !important;
     height: 92% !important;
+    margin: 0 auto;
 }
 .graphControlPanel {
     width: 100%;

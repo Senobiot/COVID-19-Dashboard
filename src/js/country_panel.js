@@ -231,11 +231,14 @@ async function getCurrentCountryData() {
 
     for (let idx = 0; idx < selectedCountryDates.length; idx += 1) {
       if (idx > 0) {
-        const confirmedCalc = selectedCountryConfirmedCummulative[idx] - selectedCountryConfirmedCummulative[idx - 1];
+        const confirmedCalc = selectedCountryConfirmedCummulative[idx]
+         - selectedCountryConfirmedCummulative[idx - 1];
         selectedCountryConfirmedDay.push(confirmedCalc >= 0 ? confirmedCalc : 0);
-        const deathsCalc = selectedCountryDeathsCummulative[idx] - selectedCountryDeathsCummulative[idx - 1];
+        const deathsCalc = selectedCountryDeathsCummulative[idx]
+        - selectedCountryDeathsCummulative[idx - 1];
         selectedCountryDeathsDay.push(deathsCalc >= 0 ? deathsCalc : 0);
-        const recoverCalc = selectedCountryRecoveredCummulative[idx] - selectedCountryRecoveredCummulative[idx - 1];
+        const recoverCalc = selectedCountryRecoveredCummulative[idx]
+        - selectedCountryRecoveredCummulative[idx - 1];
         selectedCountryRecoveredDay.push(recoverCalc >= 0 ? recoverCalc : 0);
       } else {
         selectedCountryConfirmedDay.push(selectedCountryConfirmedCummulative[idx]);
@@ -244,12 +247,18 @@ async function getCurrentCountryData() {
       }
     }
     for (let ids = 0; ids < selectedCountryDates.length; ids += 1) {
-      selectedCountryConfirmedDay100k.push((selectedCountryConfirmedDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
-      selectedCountryDeathsDay100k.push((selectedCountryDeathsDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
-      selectedCountryRecoveredDay100k.push((selectedCountryRecoveredDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
-      selectedCountryConfirmedCummulative100k.push((selectedCountryConfirmedCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
-      selectedCountryDeathsCummulative100k.push((selectedCountryDeathsCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
-      selectedCountryRecoveredCummulative100k.push((selectedCountryRecoveredCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
+      selectedCountryConfirmedDay100k.push(((selectedCountryConfirmedDay[ids]
+        / selectedCountryPopulation) * 100000).toFixed(2));
+      selectedCountryDeathsDay100k.push(((selectedCountryDeathsDay[ids]
+        / selectedCountryPopulation) * 100000).toFixed(2));
+      selectedCountryRecoveredDay100k.push(((selectedCountryRecoveredDay[ids]
+        / selectedCountryPopulation) * 100000).toFixed(2));
+      selectedCountryConfirmedCummulative100k.push(((selectedCountryConfirmedCummulative[ids]
+        / selectedCountryPopulation) * 100000).toFixed(2));
+      selectedCountryDeathsCummulative100k.push(((selectedCountryDeathsCummulative[ids]
+        / selectedCountryPopulation) * 100000).toFixed(2));
+      selectedCountryRecoveredCummulative100k.push(((selectedCountryRecoveredCummulative[ids]
+        / selectedCountryPopulation) * 100000).toFixed(2));
     }
 
     localStorage.setItem('selectedCountryDates', JSON.stringify(selectedCountryDates));
@@ -342,22 +351,31 @@ function buildCountryPanel() {
       globalDeathsDay.push(globalDeathsCummulative[idx]);
       globalRecoveredDay.push(globalRecoveredCummulative[idx]);
     } else {
-      const globalConfirmedDayCalc = globalConfirmedCummulative[idx] - globalConfirmedCummulative[idx - 1];
+      const globalConfirmedDayCalc = globalConfirmedCummulative[idx]
+      - globalConfirmedCummulative[idx - 1];
       globalConfirmedDay.push(globalConfirmedDayCalc >= 0 ? globalConfirmedDayCalc : 0);
-      const globalDeathsDayCalc = globalDeathsCummulative[idx] - globalDeathsCummulative[idx - 1];
+      const globalDeathsDayCalc = globalDeathsCummulative[idx]
+      - globalDeathsCummulative[idx - 1];
       globalDeathsDay.push(globalDeathsDayCalc >= 0 ? globalDeathsDayCalc : 0);
-      const globalRecoveredDayCalc = globalRecoveredCummulative[idx] - globalRecoveredCummulative[idx - 1];
+      const globalRecoveredDayCalc = globalRecoveredCummulative[idx]
+      - globalRecoveredCummulative[idx - 1];
       globalRecoveredDay.push(globalRecoveredDayCalc >= 0 ? globalRecoveredDayCalc : 0);
     }
   }
 
   for (let ids = 0; ids < globalDates.length; ids += 1) {
-    globalConfirmedDay100k.push((globalConfirmedDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
-    globalDeathsDay100k.push((globalDeathsDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
-    globalRecoveredDay100k.push((globalRecoveredDay[ids] / selectedCountryPopulation * 100000).toFixed(2));
-    globalConfirmedCummulative100k.push((globalConfirmedCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
-    globalDeathsCummulative100k.push((globalDeathsCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
-    globalRecoveredCummulative100k.push((globalRecoveredCummulative[ids] / selectedCountryPopulation * 100000).toFixed(2));
+    globalConfirmedDay100k.push(((globalConfirmedDay[ids]
+    / selectedCountryPopulation) * 100000).toFixed(2));
+    globalDeathsDay100k.push(((globalDeathsDay[ids]
+    / selectedCountryPopulation) * 100000).toFixed(2));
+    globalRecoveredDay100k.push(((globalRecoveredDay[ids]
+    / selectedCountryPopulation) * 100000).toFixed(2));
+    globalConfirmedCummulative100k.push(((globalConfirmedCummulative[ids]
+    / selectedCountryPopulation) * 100000).toFixed(2));
+    globalDeathsCummulative100k.push(((globalDeathsCummulative[ids]
+    / selectedCountryPopulation) * 100000).toFixed(2));
+    globalRecoveredCummulative100k.push(((globalRecoveredCummulative[ids]
+    / selectedCountryPopulation) * 100000).toFixed(2));
   }
 
   localStorage.setItem('updateDate', todayUpdate);
@@ -397,29 +415,37 @@ function buildCountryPanel() {
     'SXM', 'BLM', 'TCA', 'WLF', 'ESH', 'CYM'];
 
   const response = await fetch('https://disease.sh/v3/covid-19/countries?yesterday=false&twoDaysAgo=false');
-  const countryNamesArray = (await response.json()).filter((e) => excludeCountries.indexOf(e.countryInfo.iso3) === -1);
+  const countryNamesArray = (await response.json()).filter(
+    (e) => excludeCountries.indexOf(e.countryInfo.iso3) === -1,
+  );
 
   allCountriesFinalArray = new Array((await countryNamesArray).length);
 
-  for (let index = 0; index < allCountriesFinalArray.length; index += 1) {
-    allCountriesFinalArray[index] = {};
-    allCountriesFinalArray[index].cases = countryNamesArray[index].cases;
-    allCountriesFinalArray[index].casesPer100k = (countryNamesArray[index].casesPerOneMillion / 10).toFixed(2);
-    allCountriesFinalArray[index].deaths = countryNamesArray[index].deaths;
-    allCountriesFinalArray[index].deathsPer100k = (countryNamesArray[index].deathsPerOneMillion / 10).toFixed(2);
-    allCountriesFinalArray[index].recovered = countryNamesArray[index].recovered;
-    allCountriesFinalArray[index].recoveredPer100k = (countryNamesArray[index].recoveredPerOneMillion / 10).toFixed(2);
-    allCountriesFinalArray[index].todayCases = countryNamesArray[index].todayCases;
-    allCountriesFinalArray[index].todayDeaths = countryNamesArray[index].todayDeaths;
-    allCountriesFinalArray[index].todayRecovered = countryNamesArray[index].todayRecovered;
+  for (let i = 0; i < allCountriesFinalArray.length; i += 1) {
+    allCountriesFinalArray[i] = {};
+    allCountriesFinalArray[i].cases = countryNamesArray[i].cases;
+    allCountriesFinalArray[i].casesPer100k = (countryNamesArray[i].casesPerOneMillion
+    / 10).toFixed(2);
+    allCountriesFinalArray[i].deaths = countryNamesArray[i].deaths;
+    allCountriesFinalArray[i].deathsPer100k = (countryNamesArray[i].deathsPerOneMillion
+    / 10).toFixed(2);
+    allCountriesFinalArray[i].recovered = countryNamesArray[i].recovered;
+    allCountriesFinalArray[i].recoveredPer100k = (countryNamesArray[i].recoveredPerOneMillion
+    / 10).toFixed(2);
+    allCountriesFinalArray[i].todayCases = countryNamesArray[i].todayCases;
+    allCountriesFinalArray[i].todayDeaths = countryNamesArray[i].todayDeaths;
+    allCountriesFinalArray[i].todayRecovered = countryNamesArray[i].todayRecovered;
 
-    allCountriesFinalArray[index].todayCases100k = ((countryNamesArray[index].todayCases / countryNamesArray[index].population) * 100000).toFixed(3);
-    allCountriesFinalArray[index].todayDeaths100k = ((countryNamesArray[index].todayDeaths / countryNamesArray[index].population) * 100000).toFixed(3);
-    allCountriesFinalArray[index].todayRecovered100k = ((countryNamesArray[index].todayRecovered / countryNamesArray[index].population) * 100000).toFixed(3);
-    allCountriesFinalArray[index].iso2 = countryNamesArray[index].countryInfo.iso2;
-    allCountriesFinalArray[index].iso3 = countryNamesArray[index].countryInfo.iso3;
-    allCountriesFinalArray[index].country = countryNamesArray[index].country;
-    allCountriesFinalArray[index].population = countryNamesArray[index].population;
+    allCountriesFinalArray[i].todayCases100k = ((countryNamesArray[i].todayCases
+      / countryNamesArray[i].population) * 100000).toFixed(3);
+    allCountriesFinalArray[i].todayDeaths100k = ((countryNamesArray[i].todayDeaths
+      / countryNamesArray[i].population) * 100000).toFixed(3);
+    allCountriesFinalArray[i].todayRecovered100k = ((countryNamesArray[i].todayRecovered
+      / countryNamesArray[i].population) * 100000).toFixed(3);
+    allCountriesFinalArray[i].iso2 = countryNamesArray[i].countryInfo.iso2;
+    allCountriesFinalArray[i].iso3 = countryNamesArray[i].countryInfo.iso3;
+    allCountriesFinalArray[i].country = countryNamesArray[i].country;
+    allCountriesFinalArray[i].population = countryNamesArray[i].population;
   }
 
   localStorage.setItem('All country list final', JSON.stringify(allCountriesFinalArray));
@@ -436,29 +462,6 @@ fullScreenCountreisBtn.addEventListener('click', () => {
   sortCountryListBtnsSwitcher.classList.toggle('fullscreen');
 });
 
-// -----------------------filter field logic -----------------------------------
-
-// let searchFieldArray;
-// searchField.addEventListener("input", (event) => {
-//     searchFieldArray = [];
-//     const searchString = event.target.value;
-//     const options = countriesList.childNodes;
-//     for (let i = 0; i < options.length; i += 1) {
-//         const regex = new RegExp(`^${  searchString}`, "i");
-//         const match =  options[i].children[1].textContent.match(regex);
-//         if (!match ) {
-//             options[i].style.display = 'none';
-//         } else {
-//             if (searchString) {
-//                 const obj = allCountriesFinalArray.find(element => element.country === options[i].children[1].textContent);
-//                 searchFieldArray.push(obj);
-//             }
-//             options[i].style.display = 'block';
-//         }
-//     }
-// });
-
-// let searchFieldArray;
 searchField.addEventListener('input', (event) => {
   countriesSearchFieldResults.textContent = '';
   const searchString = event.target.value;
@@ -468,6 +471,7 @@ searchField.addEventListener('input', (event) => {
     if (match && searchField.value) {
       const searchFieldResult = document.createElement('div');
       searchFieldResult.classList.add('searchFieldResult');
+      searchFieldResult.setAttribute('data-iso2', countriesList.childNodes[i].getAttribute('data-iso2'));
       searchFieldResult.innerText = countriesList.childNodes[i].children[1].innerText;
       searchFieldResult.addEventListener('click', () => {
         getCurrentCountryData.call(countriesList.childNodes[i]);
@@ -480,6 +484,7 @@ searchField.addEventListener('input', (event) => {
   }
 });
 
-export default sortBtsEvent;
-
-// var _lsTotal=0,_xLen,_x;for(_x in localStorage){ if(!localStorage.hasOwnProperty(_x)){continue;} _xLen= ((localStorage[_x].length + _x.length)* 2);_lsTotal+=_xLen; console.log(_x.substr(0,50)+" = "+ (_xLen/1024).toFixed(2)+" KB")};console.log("Total = " + (_lsTotal / 1024).toFixed(2) + " KB");
+export {
+  sortBtsEvent, countriesList, sortCountryListBtnsSubWrapper as sortBtns,
+  countriesSearchFieldResults as searchResults,
+};
