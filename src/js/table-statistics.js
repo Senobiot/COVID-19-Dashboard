@@ -22,7 +22,7 @@ export default class CreateStatistics {
     this.statisticsContent = CreateStatistics.createDomElement('div', 'statistics__content');
     const headerStatistics = CreateStatistics.createDomElement('div', 'statistics__header');
     const subTitle = CreateStatistics.createDomElement('div', 'statistics__subtitle');
-    subTitle.innerHTML = '<div class="statistics__region"><h3>Current region</h3></div><div class="statistics__continents"><h3>Continents</h3></div>';
+    subTitle.innerHTML = '<div class="statistics__region active_tab">Current region</div><div class="statistics__continents">Continents</div>';
     headerStatistics.innerText = 'STATISTICS';
     this.continents = CreateStatistics.createDomElement('div', 'continents');
     this.wrapperTable.append(headerStatistics);
@@ -33,6 +33,21 @@ export default class CreateStatistics {
     this.createFullScreen();
     this.fullScreen.addEventListener('click', () => {
       this.wrapperTable.classList.toggle('fullScreen');
+    });
+    subTitle.addEventListener('mouseup', (e) => {
+      const item = e.target;
+      const currentItem = e.currentTarget;
+      if (item.classList.contains('statistics__region')) {
+        this.continents.classList.remove('statistics_active');
+        this.wrappercurrentStatistics.classList.add('statistics_active');
+        item.classList.add('active_tab');
+        currentItem.querySelector('.statistics__continents').classList.remove('active_tab');
+      } else if (item.classList.contains('statistics__continents')) {
+        this.continents.classList.add('statistics_active');
+        this.wrappercurrentStatistics.classList.remove('statistics_active');
+        item.classList.add('active_tab');
+        currentItem.querySelector('.statistics__region').classList.remove('active_tab');
+      }
     });
   }
 
@@ -47,12 +62,14 @@ export default class CreateStatistics {
     this.currentText = CreateStatistics.createDomElement('div', 'current__text');
     this.currentText.innerText = `${title}`;
     const currentStatistics = CreateStatistics.createDomElement('div', 'current__statistics');
+    this.wrappercurrentStatistics = CreateStatistics.createDomElement('div', 'wrapper-current-statistics', 'statistics_active');
+    this.wrappercurrentStatistics.append(currentStatistics);
+    this.statisticsContent.append(this.wrappercurrentStatistics);
     currentRegion.append(this.iconCountry);
     currentRegion.append(this.currentText);
     currentStatistics.append(this.currentProperty);
     currentStatistics.append(this.currentData);
     currentStatistics.append(currentRegion);
-    this.statisticsContent.append(currentStatistics);
     this.generateSwitch();
   }
 
@@ -82,7 +99,7 @@ export default class CreateStatistics {
       li.innerHTML = `<span>${element}</span><span class="property">${text}</span>`;
       this.list.append(li);
     });
-    this.statisticsContent.append(this.list);
+    this.wrappercurrentStatistics.append(this.list);
   }
 
   generateSwitch() {
@@ -115,9 +132,9 @@ export default class CreateStatistics {
   switchToggleExportEvent(index) {
     const checkbox = this.switchToggle.querySelector('input');
     if (index > 5) {
-      checkbox.checked = false;
-    } else {
       checkbox.checked = true;
+    } else {
+      checkbox.checked = false;
     }
     this.setCurrentProperty(index);
   }
@@ -136,7 +153,18 @@ export default class CreateStatistics {
     this.totalDataContinents = await response.json();
   }
 
+  createPropertyContinent() {
+    const ul = CreateStatistics.createDomElement('ul', 'list-properties');
+    this.properties.forEach((element) => {
+      const li = CreateStatistics.createDomElement('li', 'item__properties');
+      li.innerText = element;
+      ul.append(li);
+    });
+    this.continents.append(ul);
+  }
+
   async createContinents() {
+    this.createPropertyContinent();
     await this.getTotalDataContinents();
     this.totalDataContinents.forEach((element, index) => {
       const ul = CreateStatistics.createDomElement('ul', 'list-continent');
