@@ -58,7 +58,7 @@ export default class CreateStatistics {
 
   static getPerPopulation(data, population) {
     const countThousands = population / 100000;
-    return Number((data / countThousands).toFixed(3));
+    return Number((data / countThousands).toFixed(2));
   }
 
   generateListStatistics(data, population, isTotal) {
