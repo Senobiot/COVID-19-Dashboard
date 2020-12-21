@@ -7,13 +7,13 @@ import '../css/style_map.scss';
 import '../css/style_table.scss';
 import '../../node_modules/leaflet/dist/leaflet.css';
 import '../../node_modules/leaflet/dist/leaflet';
-import Chart from '../../node_modules/chart.js/dist/Chart';
 import './header';
 import './table_total';
-import sortBtsEvent from './country_panel.js';
-import { graphBtnExportEvents } from './graph';
+import {
+  sortBtsEvent, countriesList, sortBtns, searchResults,
+} from './country_panel';
+import { graphBtnExportEvents, graphControlPanel } from './graph';
 import './map';
-
 // import '../css/style_map.scss';
 import '../css/style_totals.scss';
 import CreateStatistics from './table-statistics';
@@ -106,5 +106,33 @@ const initApp = async () => {
   addHandlerClickStatistics();
 };
 initApp();
+
+countriesList.addEventListener('click', (event) => {
+  const iso = event.target.getAttribute('data-iso2') || event.target.closest('div').getAttribute('data-iso2');
+  return iso ? createStatisticsCurrentCountry(iso) : event.stopImmediatePropagation();
+});
+
+sortBtns.addEventListener('click', (event) => {
+  const idx = event.target.tagName === 'BUTTON' ? Array.from(event.target.parentNode.children).indexOf(event.target) : undefined;
+  if (idx >= 0) {
+    statisticsExportEvents(idx);
+    graphBtnExportEvents(idx);
+  }
+  event.stopImmediatePropagation();
+});
+
+graphControlPanel.addEventListener('click', (event) => {
+  const idx = event.target.tagName === 'BUTTON' ? Array.from(event.target.parentNode.children).indexOf(event.target) : undefined;
+  if (idx >= 0) {
+    statisticsExportEvents(idx);
+    sortBtsEvent(idx);
+  }
+  event.stopImmediatePropagation();
+});
+
+searchResults.addEventListener('click', (event) => {
+  const iso = event.target.getAttribute('data-iso2') || undefined;
+  return iso ? createStatisticsCurrentCountry(iso) : event.stopImmediatePropagation();
+});
 
 export { createStatisticsCurrentCountry, statisticsExportEvents };
