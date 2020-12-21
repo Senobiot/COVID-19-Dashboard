@@ -4,7 +4,8 @@ module.exports = {
         "es6": true
     },
         "extends": [
-            "airbnb-base"
+            "airbnb-base",
+            
         ],
     "globals": {
         "Atomics": "readonly",
@@ -15,5 +16,6 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        'linebreak-style': ['error', 'unix'],
     }
 };

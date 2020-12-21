@@ -1,3 +1,5 @@
+import Chart from '../../node_modules/chart.js/dist/Chart';
+
 const graphConfig = {
   type: 'bar',
   data: {
@@ -8,7 +10,6 @@ const graphConfig = {
       data: [],
       backgroundColor: '#675d04',
       borderColor: '#675d04',
-      // borderWidth: 1
     }],
   },
   options: {
@@ -55,10 +56,25 @@ const graphControlPanelDataBtn = document.createElement('input');
 graphControlPanelDataBtn.type = 'checkbox';
 graphControlPanelDataBtn.classList.add('graphSwitcherData');
 
+const fullScreenBtn = document.createElement('div');
+fullScreenBtn.classList.add('fullScreenGraph');
+
+graphWrapper.appendChild(graph);
+graphWrapper.appendChild(graphControlPanelTypeBtn);
+graphWrapper.appendChild(graphControlPanelDataBtn);
+graphWrapper.appendChild(graphControlPanel);
+graphWrapper.appendChild(fullScreenBtn);
+
+document.body.appendChild(graphWrapper);
+
+const ctx = document.getElementById('myChart').getContext('2d');
+
+const myChart = new Chart(ctx, graphConfig);
+
 for (let i = 1; i <= 12; i += 1) {
   const graphControlPanelCaseBtn = document.createElement('button');
   graphControlPanelCaseBtn.classList.add('graphDataBtn');
-  if (i < 4 || i > 6 && i < 10) {
+  if ((i < 4 || i > 6) && i < 10) {
     graphControlPanelCaseBtn.textContent = 'Daily';
   } else {
     graphControlPanelCaseBtn.textContent = 'Summary';
@@ -134,9 +150,12 @@ function graphControlPanelBtnsGroup(group) {
 for (let index = 0; index < graphControlPanel.childNodes.length; index += 1) {
   graphControlPanel.children[index].draw = graphBtsEvent;
   graphControlPanel.children[index].addEventListener('click', graphBtsEvent);
+  graphControlPanel.children[index].addEventListener('click', () => {
+    localStorage.setItem('currentDataNumber', index);
+  });
 }
 
-const graphBtnExportEvents = function (number, changeCountry) {
+const graphBtnExportEvents = function graphBtnExportEventsClick(number, changeCountry) {
   if (number < 6 && graphControlPanelDataBtn.checked) {
     graphControlPanelDataBtn.checked = false;
     graphControlPanelBtnsGroup(2);
@@ -146,21 +165,6 @@ const graphBtnExportEvents = function (number, changeCountry) {
   }
   graphControlPanel.children[number].draw(changeCountry);
 };
-
-const fullScreenBtn = document.createElement('div');
-fullScreenBtn.classList.add('fullScreenGraph');
-
-graphWrapper.appendChild(graph);
-graphWrapper.appendChild(graphControlPanelTypeBtn);
-graphWrapper.appendChild(graphControlPanelDataBtn);
-graphWrapper.appendChild(graphControlPanel);
-graphWrapper.appendChild(fullScreenBtn);
-
-document.body.appendChild(graphWrapper);
-
-const ctx = document.getElementById('myChart').getContext('2d');
-
-const myChart = new Chart(ctx, graphConfig);
 
 graphControlPanelTypeBtn.addEventListener('click', function clickGraphControlPanelTypeBtn() {
   if (this.checked) {
@@ -184,4 +188,4 @@ graphControlPanelDataBtn.addEventListener('click', function clickGraphControlPan
   }
 });
 
-export { graphWrapper, graphBtnExportEvents };
+export { graphWrapper, graphBtnExportEvents, graphControlPanel };
