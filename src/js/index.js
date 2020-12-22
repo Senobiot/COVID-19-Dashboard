@@ -19,8 +19,7 @@ import '../css/style_totals.scss';
 import CreateStatistics from './table-statistics';
 
 let dataCurrentRegion = '';
-
-let population = 7793895016;
+let population = '';
 const statistics = new CreateStatistics(document.body);
 let isTotal = false; // Флаг выбора расчета показателей на все население или 100К
 
@@ -43,13 +42,14 @@ const createStatisticsCurrentCountry = async (iso2Country) => {
 const getTotalData = async () => {
   const response = await fetch('https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false');
   dataCurrentRegion = await response.json();
+  population = dataCurrentRegion.population;
 };
 
 // Обрабока клика по таблице статистики
 const addHandlerClickStatistics = () => {
   statistics.wrapperTable.addEventListener('mouseup', (e) => {
     const item = e.target;
-    if (item.tagName === 'SPAN' || item.tagName === 'LI') {
+    if (item.tagName === 'SPAN' || item.classList.contains('item__statistics')) {
       let currentLi = '';
       if (item.tagName === 'SPAN') {
         currentLi = item.closest('li');
@@ -84,6 +84,7 @@ const statisticsExportEvents = (index) => {
   } else {
     isTotal = false;
   }
+  statistics.switchToggle.dataset.index = index;
   statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
   statistics.switchToggleExportEvent(index);
 };
@@ -132,5 +133,3 @@ searchResults.addEventListener('click', (event) => {
   const iso = event.target.getAttribute('data-iso2') || undefined;
   return iso ? createStatisticsCurrentCountry(iso) : event.stopImmediatePropagation();
 });
-
-export { createStatisticsCurrentCountry, statisticsExportEvents };
