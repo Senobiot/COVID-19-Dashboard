@@ -1,25 +1,285 @@
-// const mapWrapper = document.createElement('div');
-// mapWrapper.id = 'map';
-// document.body.appendChild(mapWrapper);
+export default class WorldMap {
+  constructor() {
+    this.countriesInfo = null;
+    this.dataAttributes = ['todayCases', 'todayDeaths', 'todayRecovered', 'cases', 'deaths', 'recovered'];
+    this.infoToRender = ['Daily confirmed', 'Daily deaths', 'Daily recovered', 'Summary confirmed', 'Summary deaths', 'Summary recovered', 'Daily confirmed per 100k', 'Daily deaths per 100k', 'Daily recovered per 100k', 'Summary confirmed per 100k', 'Summary deaths per 100k', 'Summary recovered per 100k'];
+    this.colorClass = ['red', 'purple', 'white', 'orange', 'green', 'blue', 'mint', 'pink', 'yellow', 'brown', 'electric', 'violet'];
+    this.excludeCountries = ['AIA', 'ABW', 'BMU', 'VGB', 'BES', 'JEY', 'CUW', null, 'FLK', 'FRO', 'GUF', 'PYF', 'GIB', 'GRL',
+      'GLP', 'VAT', 'HKG', 'IMN', 'MAC', 'MTQ', 'MYT', 'MSR', 'MMR', 'NCL', 'PSE', 'REU', 'MAF', 'SPM',
+      'SXM', 'BLM', 'TCA', 'WLF', 'ESH', 'CYM'];
+  }
 
-// const mymap = L.map('map').setView([51.505, 28.09], 2);
+  generateLayout() {
+    this.mapWrapper = document.createElement('div');
+    this.mapWrapper.classList.add('map-wrapper');
+    this.mapWrapper.id = 'map';
+    document.body.appendChild(this.mapWrapper);
+    const mapOptions = {
+      center: [9.103241, -25.031420],
+      zoom: 1,
+      worldCopyJump: true,
+    };
+    this.map = new L.map('map', mapOptions);
+    const layer = new L.TileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+      maxZoom: 6,
+      minZoom: 1,
+    });
+    layer.addTo(this.map);
+    this.addButtons();
+    this.generateMarkers(0);
+  }
 
-//  const layer = new L.TileLayer('http://scripts.digital-geography.com/black_marble/2016/{z}/{x}/{y}.png', {
-//     maxZoom: 8,
-//     minZoom: 3,
-//     attribution: "data by Nasa 2016, composition by <a href='http://geolicious.de'>Geolicious</a>"
-//     });
+  generateMarkers(index = 0) {
+    WorldMap.removeMarkers();
+    WorldMap.setActiveButton(index);
+    const choosenParam = index < 6 ? this.dataAttributes[index] : this.dataAttributes[index - 6];
+    const maxValue = index < 6 ? WorldMap.countMaxValue(choosenParam, this.countriesInfo) : WorldMap
+      .countRelativeMaxValue(choosenParam, this.countriesInfo);
+    const text = this.infoToRender[index];
+    const colorsClass = this.colorClass[index];
+    this.generateLegend(index, maxValue, colorsClass);
+    this.countriesInfo.forEach((el) => {
+      let numbers = el[choosenParam];
+      if (index > 5) {
+        if (el.population) {
+          numbers = Number((el[choosenParam] / (el.population / 100000)).toFixed(2));
+        } else {
+          numbers = 'exclude';
+        }
+      }
+      if (this.excludeCountries.includes(el.countryInfo.iso3)) {
+        numbers = 'exclude';
+      }
+      if (numbers !== 'exclude') {
+        const elClass = WorldMap.countMarkerClass(numbers, maxValue);
+        this.createMarker(el.countryInfo.lat, el.countryInfo.long, el.country, elClass, colorsClass,
+          el.countryInfo.iso2, el.countryInfo.iso3, text, numbers);
+      }
+    });
+  }
 
-//  mymap.addLayer(layer);
-//  const marker = L.marker([17.385044, 78.486671]);
+  createMarker(lat, long, country, elClass, colorsClass, iso2, iso3, text, numbers) {
+    const element = `<span class="icon-marker ${elClass} ${colorsClass}" data-iso2=${iso2} data-iso3=${iso3} data-lat=${lat} data-long=${long}>
+      <span class="icon-marker-tooltip">
+        <h2>${country}</h2>
+        <p><strong>${text}:</strong> ${new Intl.NumberFormat('ru-RU').format(numbers)}</p>
+      </span>
+    </span>`;
+    const myIcon = L.divIcon({
+      html: element,
+      iconSize: [20, 20],
+      className: 'map-marker',
+    });
+    const markerOptions = {
+      clickable: true,
+      icon: myIcon,
+    };
+    const marker = new L.Marker([lat, long], markerOptions);
+    marker.addTo(this.map);
+    marker.bindPopup(`<strong>${country}</strong><br/><strong>${text}</strong>: ${new Intl.NumberFormat('ru-RU').format(numbers)}`);
+  }
 
-//  // Adding marker to the map
-//  //marker.addTo(mymap);
-//  //marker.bindPopup('Hi Welcome to Tutorialspoint').openPopup();
+  static removeMarkers() {
+    const allMarkers = document.querySelectorAll('.map-marker');
+    if (allMarkers.length) {
+      allMarkers.forEach((el) => {
+        el.remove();
+      });
+    }
+  }
 
-//  const zoomOptions = {
-//     zoomInText: '1',
-//     zoomOutText: '0',
-//  };
-//  const zoom = L.control.zoom(zoomOptions);   // Creating zoom control
-//  zoom.addTo(mymap);   // Adding zoom control to the map
+  static setActiveButton(index) {
+    const activeBtn = document.querySelector('.active-map');
+    if (activeBtn) {
+      activeBtn.classList.remove('active-map');
+    }
+    const allButtons = document.querySelectorAll('.map-buttons-item');
+    allButtons.item(index).classList.add('active-map');
+  }
+
+  addButtons() {
+    const listElement = document.createElement('div');
+    this.mapWrapper.appendChild(listElement);
+    listElement.classList.add('map-buttons-list');
+    this.infoToRender.forEach((el, ind) => {
+      const listItem = document.createElement('button');
+      listElement.appendChild(listItem);
+      listItem.classList.add('map-buttons-item');
+      listItem.dataset.index = ind;
+      listItem.textContent = `${el}`;
+    });
+    const expandButton = document.createElement('button');
+    this.mapWrapper.appendChild(expandButton);
+    expandButton.classList.add('expand-map-button');
+    expandButton.addEventListener('click', this.expandFullScreen.bind(this));
+    const legendButton = document.createElement('button');
+    this.mapWrapper.appendChild(legendButton);
+    legendButton.classList.add('legend-map-button');
+    legendButton.addEventListener('click', this.expandLegend.bind(this));
+  }
+
+  renderMap() {
+    const getCountriesData = async () => {
+      const responseCountries = await fetch('https://disease.sh/v3/covid-19/countries/');
+      this.countriesInfo = await responseCountries.json();
+    };
+    const initApp = async () => {
+      await getCountriesData();
+      this.generateLayout();
+    };
+    initApp();
+  }
+
+  resetView() {
+    this.map.flyTo([9.103241, -25.031420], 1);
+  }
+
+  getСoordinates(buttonIso) {
+    let coordinates = null;
+    this.countriesInfo.forEach((el) => {
+      const countryIso = el.countryInfo.iso2;
+      if (buttonIso === countryIso) {
+        coordinates = [el.countryInfo.lat, el.countryInfo.long];
+      }
+    });
+    return coordinates;
+  }
+
+  showChoosenCountry(buttonIso) {
+    const countryCoordinates = this.getСoordinates(buttonIso);
+    const allMarkers = document.querySelectorAll('.icon-marker');
+    if (allMarkers.length) {
+      allMarkers.forEach((el) => {
+        if (el.dataset.iso2 === buttonIso) {
+          el.click();
+        }
+      });
+    }
+    if (countryCoordinates) {
+      this.map.flyTo(countryCoordinates, 5);
+    }
+  }
+
+  changeView(buttonIso) {
+    const countryCoordinates = this.getСoordinates(buttonIso);
+    if (countryCoordinates) {
+      this.map.flyTo(countryCoordinates, 5);
+    }
+  }
+
+  static countMaxValue(param, cInfo) {
+    const arr = [];
+    cInfo.forEach((val) => {
+      arr.push(val[param]);
+    });
+    arr.sort((a, b) => a - b);
+    arr.splice(arr.length - 4);
+    return arr[arr.length - 1];
+  }
+
+  static countRelativeMaxValue(param, cInfo) {
+    const arr = [];
+    cInfo.forEach((val) => {
+      if (val.population) {
+        const res = Number((val[param] / (val.population / 100000)).toFixed(2));
+        arr.push(res);
+      }
+    });
+    arr.sort((a, b) => a - b);
+    arr.splice(arr.length - 4);
+    return arr[arr.length - 1];
+  }
+
+  static countMarkerClass(param, maxValue) {
+    const max = WorldMap.countIntervalsMax(maxValue);
+    const interval = max / 5;
+    if (param >= max - interval) {
+      return 'icon-size-xl';
+    } if (param <= max - interval && param >= max - (interval * 2)) {
+      return 'icon-size-l';
+    } if (param <= max - (interval * 2) && param >= max - (interval * 3)) {
+      return 'icon-size-m';
+    } if (param <= max - (interval * 3) && param >= max - (interval * 4)) {
+      return 'icon-size-s';
+    }
+    return 'icon-size-xs';
+  }
+
+  static countIntervalsMax(max) {
+    const deg = Math.round(max).toString().length - 1;
+    const maxPar = (Math.round(max / (10 ** deg))) * (10 ** deg);
+    return maxPar;
+  }
+
+  expandFullScreen() {
+    this.mapWrapper.classList.toggle('fullscreen');
+    const currentZoom = this.map.getZoom();
+    if (currentZoom < 2) {
+      this.map.flyTo([55.660363, 18.532167], 2);
+    }
+  }
+
+  generateLegend(index, maxValue, colorsClass) {
+    if (this.legendContainer) {
+      this.legendContainer.remove();
+    }
+    const sizeClass = ['icon-size-xl', 'icon-size-l', 'icon-size-m', 'icon-size-s', 'icon-size-xs'];
+    this.legendContainer = document.createElement('table');
+    this.mapWrapper.appendChild(this.legendContainer);
+    this.legendContainer.classList.add('map-legend');
+    this.legendContainer.classList.add('hidden-legend');
+
+    const legentTitle = document.createElement('thead');
+    legentTitle.textContent = `${this.infoToRender[index]}`;
+    this.legendContainer.appendChild(legentTitle);
+    legentTitle.classList.add('map-legend-title');
+
+    const interval = WorldMap.countIntervalsMax(maxValue) / 5;
+
+    let max = WorldMap.countIntervalsMax(maxValue) - interval;
+
+    sizeClass.forEach((el) => {
+      const legendElement = document.createElement('tr');
+      legendElement.classList.add('map-legend-item');
+      this.legendContainer.appendChild(legendElement);
+
+      const pointContainer = document.createElement('td');
+      pointContainer.classList.add('map-legend-point');
+      legendElement.appendChild(pointContainer);
+
+      const newPoint = document.createElement('span');
+      pointContainer.appendChild(newPoint);
+      newPoint.classList.add(`${colorsClass}`);
+      newPoint.classList.add(`${el}`);
+      newPoint.classList.add('icon-marker');
+
+      const newInterval = document.createElement('td');
+      legendElement.appendChild(newInterval);
+      newInterval.classList.add('map-legend-interval');
+      newInterval.textContent = `> ${new Intl.NumberFormat('ru-RU').format(max)}`;
+      if (index === '7') {
+        max = (max - interval).toFixed(1);
+        if (max <= 0) {
+          max = 0;
+        }
+      } else {
+        max -= interval;
+      }
+    });
+
+    const closeBtn = document.createElement('button');
+    this.legendContainer.appendChild(closeBtn);
+    closeBtn.classList.add('map-legend-close');
+    closeBtn.addEventListener('click', this.hideLegend.bind(this));
+  }
+
+  expandLegend() {
+    this.legendContainer.classList.toggle('hidden-legend');
+  }
+
+  hideLegend() {
+    if (this.legendContainer) {
+      this.legendContainer.classList.add('hidden-legend');
+    }
+  }
+}

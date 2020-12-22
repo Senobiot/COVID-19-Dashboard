@@ -13,14 +13,15 @@ import {
   sortBtsEvent, countriesList, sortBtns, searchResults,
 } from './country_panel';
 import { graphBtnExportEvents, graphControlPanel } from './graph';
-import './map';
-// import '../css/style_map.scss';
+import WorldMap from './map';
+
 import '../css/style_totals.scss';
 import CreateStatistics from './table-statistics';
 
 let dataCurrentRegion = '';
 let population = '';
 const statistics = new CreateStatistics(document.body);
+const worldMap = new WorldMap();
 let isTotal = false; // Флаг выбора расчета показателей на все население или 100К
 
 const getDataCurrentCountry = async (country) => {
@@ -29,6 +30,7 @@ const getDataCurrentCountry = async (country) => {
 };
 
 const createStatisticsCurrentCountry = async (iso2Country) => {
+  worldMap.showChoosenCountry(iso2Country);
   await getDataCurrentCountry(iso2Country);
   population = dataCurrentRegion.population;
   const { country } = dataCurrentRegion;
@@ -61,6 +63,7 @@ const addHandlerClickStatistics = () => {
       graphBtnExportEvents(dataIndex);
       statistics.setCurrentProperty(dataIndex);
       statistics.switchToggle.dataset.index = dataIndex;
+      worldMap.generateMarkers(dataIndex);
     } else if (item.tagName === 'INPUT') {
       let dataIndex = Number(item.closest('.switch__statistics').dataset.index);
       if (isTotal) {
@@ -78,6 +81,25 @@ const addHandlerClickStatistics = () => {
   });
 };
 
+const addHandlerClickMap = () => {
+  worldMap.mapWrapper.addEventListener('click', (event) => {
+    const targetElement = event.target;
+    if (targetElement.tagName === 'BUTTON') {
+      const elIndex = targetElement.dataset.index;
+      if (elIndex) {
+        worldMap.generateMarkers(elIndex);
+        return;
+      }
+    }
+    if (targetElement.tagName === 'SPAN') {
+      const elIso2 = targetElement.dataset.iso2;
+      if (elIso2) {
+        worldMap.changeView(elIso2);
+      }
+    }
+  });
+};
+
 const statisticsExportEvents = (index) => {
   if (index > 5) {
     isTotal = true;
@@ -87,6 +109,7 @@ const statisticsExportEvents = (index) => {
   statistics.switchToggle.dataset.index = index;
   statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
   statistics.switchToggleExportEvent(index);
+  worldMap.generateMarkers(index);
 };
 
 const createStatisticsFirstOnload = () => {
@@ -99,10 +122,12 @@ const createStatisticsFirstOnload = () => {
 // Инициализация приложения
 const initApp = async () => {
   createStatisticsFirstOnload();
+  worldMap.renderMap();
   await getTotalData();
   statistics.createContinents();
   statistics.generateListStatistics(dataCurrentRegion, population, isTotal);
   addHandlerClickStatistics();
+  addHandlerClickMap();
 };
 initApp();
 
@@ -116,6 +141,7 @@ sortBtns.addEventListener('click', (event) => {
   if (idx >= 0) {
     statisticsExportEvents(idx);
     graphBtnExportEvents(idx);
+    worldMap.generateMarkers(idx);
   }
   event.stopImmediatePropagation();
 });
@@ -125,6 +151,7 @@ graphControlPanel.addEventListener('click', (event) => {
   if (idx >= 0) {
     statisticsExportEvents(idx);
     sortBtsEvent(idx);
+    worldMap.generateMarkers(idx);
   }
   event.stopImmediatePropagation();
 });
