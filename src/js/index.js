@@ -10,7 +10,7 @@ import '../../node_modules/leaflet/dist/leaflet';
 import './header';
 import './table_total';
 import {
-  sortBtsEvent, countriesList, sortBtns, searchResults,
+  sortBtsEvent, countriesList, sortBtns, searchResults, getCurrentCountryData,
 } from './country_panel';
 import { graphBtnExportEvents, graphControlPanel } from './graph';
 import WorldMap from './map';
@@ -165,3 +165,8 @@ searchResults.addEventListener('click', (event) => {
   const iso = event.target.getAttribute('data-iso2') || undefined;
   return iso ? createStatisticsCurrentCountry(iso) : event.stopImmediatePropagation();
 });
+<<<<<<< HEAD
+=======
+
+export { createStatisticsCurrentCountry, statisticsExportEvents };
+>>>>>>> 50aaf58... feat: add call get selected country method to map
