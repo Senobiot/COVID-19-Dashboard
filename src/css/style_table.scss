@@ -19,38 +19,7 @@
     height: 95%;
     background-color: #b3b8ab;
     left: 0;
-    @media screen and (min-width: 925px) {
-      .statistics__content {
-        justify-content: space-around;
-        display: flex;
-        flex-direction: column;
-        max-width: 950px;
-        margin: 10px auto;
-        border-radius: 5px;
-      }
-      .statistics__subtitle {
-        display: none;
-      }
-      .item__statistics {
-        font-size: 2rem;
-        min-width: 365px;
-      }
-      .list-continent {
-        font-size: 2rem;
-      }
-      .current__statistics {
-        min-width: 157px;
-      }
-      .list-properties {
-        font-size: 2rem;
-        margin: 32px 10px 0 0;
-      }
-      .continents,
-      .wrapper-current-statistics {
-        display: flex;
-        width: 910px;
-      }
-    }
+
     .current__text {
       @media screen and (max-width: 1650px) {
         white-space: nowrap;
@@ -202,6 +171,7 @@
 .list-continent {
   font-size: 1.4rem;
   border-right: 1px solid black;
+  width: 90px;
   li {
     margin-bottom: 17px;
     padding: 0 4px;
@@ -252,17 +222,12 @@
 }
 .wrapper-lists {
   display: flex;
-  @media screen and (max-width: 1650px) {
-    ul:nth-child(5) {
-      border: none;
-      margin-right: 20px;
-    }
-  }
+  /*  @media screen and (max-width: 1650px) {
+   
+  } */
   @media screen and (max-width: 1350px) {
-    ul:nth-child(4) {
-      border: none;
-      margin-right: 20px;
-    }
+    width: 178px;
+    overflow: hidden;
   }
 }
 .triangle-left {
@@ -285,6 +250,10 @@
   cursor: pointer;
 }
 
+.lists {
+  display: flex;
+  transition: all 0.5s;
+}
 .triangle-right {
   border-left: 9px solid #404344;
   display: none;
