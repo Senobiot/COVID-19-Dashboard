@@ -454,6 +454,7 @@ function buildCountryPanel() {
 }());
 
 fullScreenCountreisBtn.addEventListener('click', () => {
+  document.body.classList.toggle('block');
   countriesModule.classList.toggle('fullscreen');
   searchWrapper.classList.toggle('fullscreen');
   sortCountryListBtnsSubWrapper.classList.toggle('fullscreen');

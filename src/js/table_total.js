@@ -250,6 +250,7 @@ tableTotalDailyInfoBtn.addEventListener('click', function clickTableTotalDailyIn
 });
 
 fullScreenBtn.addEventListener('click', () => {
+  document.body.classList.toggle('block');
   tableTotalWrapper.classList.toggle('fullScreen');
 });
 

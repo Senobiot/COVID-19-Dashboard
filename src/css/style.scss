@@ -5,11 +5,6 @@ $font_1: 'Cairo', sans-serif;
 $font_2: 'Rubik', sans-serif;
 
 body {
-    // display: grid;
-    // grid-template-columns: repeat(5, 1fr);
-    // grid-template-rows: 0.1fr 0.8fr 0.1fr 1fr;
-    // grid-column-gap: 5px;
-    // grid-row-gap: 5px;
     position: relative;
     font-family: $font_2;
     overflow: hidden;
