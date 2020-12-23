@@ -106,6 +106,7 @@ const addHandlerClickMap = () => {
         return;
       }
     }
+    
     if (targetElement.tagName === 'DIV') {
       const elIso2 = targetElement.dataset.iso2;
       if (elIso2) {
