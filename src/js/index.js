@@ -93,6 +93,16 @@ const statisticsExportEvents = (index) => {
   worldMap.generateMarkers(index);
 };
 
+
+function getDataCurrentCountryForMap(iso2) {
+  const countriesForGetData = Array.from(countriesList.childNodes);
+  const country = countriesForGetData.find((e) => e.getAttribute('data-iso2') === iso2);
+  const idx = countriesForGetData.indexOf(country);
+  countriesList.childNodes[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
+  getCurrentCountryData.call(country);
+}
+
+
 const addHandlerClickMap = () => {
   worldMap.mapWrapper.addEventListener('click', (event) => {
     const targetElement = event.target;
@@ -112,6 +122,7 @@ const addHandlerClickMap = () => {
       if (elIso2) {
         worldMap.changeView(elIso2);
         createStatisticsCurrentCountry(elIso2);
+        getDataCurrentCountryForMap(elIso2);
       }
     }
   });
@@ -165,8 +176,3 @@ searchResults.addEventListener('click', (event) => {
   const iso = event.target.getAttribute('data-iso2') || undefined;
   return iso ? createStatisticsCurrentCountry(iso) : event.stopImmediatePropagation();
 });
-<<<<<<< HEAD
-=======
-
-export { createStatisticsCurrentCountry, statisticsExportEvents };
->>>>>>> 50aaf58... feat: add call get selected country method to map
