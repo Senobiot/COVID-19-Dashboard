@@ -81,25 +81,6 @@ const addHandlerClickStatistics = () => {
   });
 };
 
-const addHandlerClickMap = () => {
-  worldMap.mapWrapper.addEventListener('click', (event) => {
-    const targetElement = event.target;
-    if (targetElement.tagName === 'BUTTON') {
-      const elIndex = targetElement.dataset.index;
-      if (elIndex) {
-        worldMap.generateMarkers(elIndex);
-        return;
-      }
-    }
-    if (targetElement.tagName === 'SPAN') {
-      const elIso2 = targetElement.dataset.iso2;
-      if (elIso2) {
-        worldMap.changeView(elIso2);
-      }
-    }
-  });
-};
-
 const statisticsExportEvents = (index) => {
   if (index > 5) {
     isTotal = true;
@@ -110,6 +91,29 @@ const statisticsExportEvents = (index) => {
   statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
   statistics.switchToggleExportEvent(index);
   worldMap.generateMarkers(index);
+};
+
+const addHandlerClickMap = () => {
+  worldMap.mapWrapper.addEventListener('click', (event) => {
+    const targetElement = event.target;
+    if (targetElement.tagName === 'BUTTON') {
+      const elIndex = targetElement.dataset.index;
+      if (elIndex) {
+        statisticsExportEvents(Number(elIndex));
+        sortBtsEvent(Number(elIndex));
+        graphBtnExportEvents(Number(elIndex));
+        worldMap.generateMarkers(elIndex);
+        return;
+      }
+    }
+    if (targetElement.tagName === 'SPAN') {
+      const elIso2 = targetElement.dataset.iso2;
+      if (elIso2) {
+        worldMap.changeView(elIso2);
+        createStatisticsCurrentCountry(elIso2);
+      }
+    }
+  });
 };
 
 const createStatisticsFirstOnload = () => {
