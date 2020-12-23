@@ -14,7 +14,7 @@ import {
   sortBtsEvent, countriesList, sortBtns, searchResults, getCurrentCountryData,
 } from './country_panel';
 import { graphBtnExportEvents, graphControlPanel } from './graph';
-//import WorldMap from './map';
+import WorldMap from './map';
 
 import '../css/style_totals.scss';
 import '../css/media_list.scss';
