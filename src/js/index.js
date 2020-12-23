@@ -22,7 +22,6 @@ import CreateStatistics from './table-statistics';
 
 import './kyeboard';
 
-
 let dataCurrentRegion = '';
 let population = '';
 const statistics = new CreateStatistics(document.body);

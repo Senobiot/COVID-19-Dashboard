@@ -454,7 +454,7 @@ function buildCountryPanel() {
 }());
 
 fullScreenCountreisBtn.addEventListener('click', () => {
-  //document.body.classList.toggle('block');
+  // document.body.classList.toggle('block');
   countriesModule.classList.toggle('fullscreen');
   searchWrapper.classList.toggle('fullscreen');
   sortCountryListBtnsSubWrapper.classList.toggle('fullscreen');
@@ -487,5 +487,5 @@ searchField.addEventListener('input', (event) => {
 
 export {
   sortBtsEvent, getCurrentCountryData, countriesList, sortCountryListBtnsSubWrapper as sortBtns,
-  countriesSearchFieldResults as searchResults, searchField as display
+  countriesSearchFieldResults as searchResults, searchField as display,
 };
