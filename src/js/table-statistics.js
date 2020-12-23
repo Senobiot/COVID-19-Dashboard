@@ -208,7 +208,6 @@ export default class CreateStatistics {
 
   addClickHandlerArrowRigth() {
     this.arrowRight.addEventListener('mouseup', () => {
-      console.log(this.continents.offsetWidth);
       if (this.continents.offsetWidth === 470) {
         if (this.stepWidth > -270) {
           this.stepWidth -= 270;
