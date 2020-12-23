@@ -24,7 +24,6 @@
   bottom: 23%;
   z-index: 420;
 }
-
 .map-wrapper {
   position: absolute;
   top: 43%;
@@ -39,10 +38,7 @@
     left: 0;
   }
 }
-.map-marker {
-  height: 30px;
-  width: 30px;
-}
+
 .icon-marker {
   display: flex;
   position: relative;
@@ -56,6 +52,11 @@
   font-size: .7em;
   
   &:hover {
+    .icon-marker-tooltip {
+      display: block;
+    }
+  }
+  &.hover {
     .icon-marker-tooltip {
       display: block;
     }
