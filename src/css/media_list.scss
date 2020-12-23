@@ -1,0 +1,46 @@
+@media  (max-width: 1599px)  {
+    .countriesModule {
+        width: 30%;
+    }
+    .graphWrapper {
+        left: calc(30% + 2px);;
+    }
+} 
+
+@media  (max-width: 1023px)  { 
+    .sortCountryListBtnsWrapper {
+        &.fullscreen {
+            width: 50%;
+        }
+    }
+    .countriesList {
+        &.fullscreen {
+        width: 50%;
+    }
+    }
+    .searchWrapper {
+        &.fullscreen {
+            width: 50%;
+            left: 25%;
+        }
+    }
+  }
+
+  @media  (max-width: 767px)  { 
+    .countriesList {
+        &.fullscreen {
+        width: 90%;
+    }
+    } 
+    .sortCountryListBtnsWrapper {
+         &.fullscreen {
+            width: 90%;
+        } 
+    }
+    .searchWrapper {
+       &.fullscreen {
+          width: 90%;
+          left: 5%;
+        }
+     }
+  }
