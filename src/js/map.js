@@ -59,12 +59,15 @@ export default class WorldMap {
   }
 
   createMarker(lat, long, country, elClass, colorsClass, iso2, iso3, text, numbers) {
-    const element = `<span class="icon-marker ${elClass} ${colorsClass}" data-iso2=${iso2} data-iso3=${iso3} data-lat=${lat} data-long=${long}>
-      <span class="icon-marker-tooltip">
+    const element = `<div class="icon-marker ${elClass} ${colorsClass}" data-iso2=${iso2} data-iso3=${iso3} data-lat=${lat} data-long=${long}>
+      <div class="icon-marker-tooltip">
+        <div class="icon-tooltip-title">
         <h2>${country}</h2>
+        <img class="icon-tooltip-flag" src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="Country flag">
+        </div>
         <p><strong>${text}:</strong> ${new Intl.NumberFormat('ru-RU').format(numbers)}</p>
-      </span>
-    </span>`;
+      </div>
+    </div>`;
     const myIcon = L.divIcon({
       html: element,
       iconSize: [20, 20],
@@ -76,7 +79,7 @@ export default class WorldMap {
     };
     const marker = new L.Marker([lat, long], markerOptions);
     marker.addTo(this.map);
-    marker.bindPopup(`<strong>${country}</strong><br/><strong>${text}</strong>: ${new Intl.NumberFormat('ru-RU').format(numbers)}`);
+    marker.bindPopup(`<strong>${country}</strong><br/><img class="icon-tooltip-flag" src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="Country flag"><br/><strong>${text}</strong>: ${new Intl.NumberFormat('ru-RU').format(numbers)}`);
   }
 
   static removeMarkers() {
@@ -98,15 +101,22 @@ export default class WorldMap {
   }
 
   addButtons() {
-    const listElement = document.createElement('div');
-    this.mapWrapper.appendChild(listElement);
-    listElement.classList.add('map-buttons-list');
+    const leftElement = document.createElement('div');
+    this.mapWrapper.appendChild(leftElement);
+    leftElement.classList.add('map-buttons-list-left');
+    const rightElement = document.createElement('div');
+    this.mapWrapper.appendChild(rightElement);
+    rightElement.classList.add('map-buttons-list-right');
     this.infoToRender.forEach((el, ind) => {
       const listItem = document.createElement('button');
-      listElement.appendChild(listItem);
       listItem.classList.add('map-buttons-item');
       listItem.dataset.index = ind;
       listItem.textContent = `${el}`;
+      if (ind < 6) {
+        leftElement.appendChild(listItem);
+      } else if (ind > 5) {
+        rightElement.appendChild(listItem);
+      }
     });
     const expandButton = document.createElement('button');
     this.mapWrapper.appendChild(expandButton);
@@ -128,10 +138,6 @@ export default class WorldMap {
       this.generateLayout();
     };
     initApp();
-  }
-
-  resetView() {
-    this.map.flyTo([9.103241, -25.031420], 1);
   }
 
   getСoordinates(buttonIso) {

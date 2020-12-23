@@ -485,6 +485,6 @@ searchField.addEventListener('input', (event) => {
 });
 
 export {
-  sortBtsEvent, countriesList, sortCountryListBtnsSubWrapper as sortBtns,
+  sortBtsEvent, getCurrentCountryData, countriesList, sortCountryListBtnsSubWrapper as sortBtns,
   countriesSearchFieldResults as searchResults,
 };

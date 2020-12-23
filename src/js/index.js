@@ -10,7 +10,7 @@ import '../../node_modules/leaflet/dist/leaflet';
 import './header';
 import './table_total';
 import {
-  sortBtsEvent, countriesList, sortBtns, searchResults,
+  sortBtsEvent, countriesList, sortBtns, searchResults, getCurrentCountryData,
 } from './country_panel';
 import { graphBtnExportEvents, graphControlPanel } from './graph';
 import WorldMap from './map';
@@ -93,6 +93,14 @@ const statisticsExportEvents = (index) => {
   worldMap.generateMarkers(index);
 };
 
+function getDataCurrentCountryForMap(iso2) {
+  const countriesForGetData = Array.from(countriesList.childNodes);
+  const country = countriesForGetData.find((e) => e.getAttribute('data-iso2') === iso2);
+  const idx = countriesForGetData.indexOf(country);
+  countriesList.childNodes[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
+  getCurrentCountryData.call(country);
+}
+
 const addHandlerClickMap = () => {
   worldMap.mapWrapper.addEventListener('click', (event) => {
     const targetElement = event.target;
@@ -106,11 +114,13 @@ const addHandlerClickMap = () => {
         return;
       }
     }
-    if (targetElement.tagName === 'SPAN') {
+
+    if (targetElement.tagName === 'DIV') {
       const elIso2 = targetElement.dataset.iso2;
       if (elIso2) {
         worldMap.changeView(elIso2);
         createStatisticsCurrentCountry(elIso2);
+        getDataCurrentCountryForMap(elIso2);
       }
     }
   });
