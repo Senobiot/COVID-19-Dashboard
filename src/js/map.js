@@ -14,11 +14,15 @@ export default class WorldMap {
     this.mapWrapper.classList.add('map-wrapper');
     this.mapWrapper.id = 'map';
     document.body.appendChild(this.mapWrapper);
+    const bounds = new L.LatLngBounds(new L.LatLng(84.67351257, -172.96875),
+      new L.LatLng(-54.36775852, 178.59375));
     const mapOptions = {
-      center: [9.103241, -25.031420],
+      center: [15.118831526705586, -19.86028053148647],
       zoom: 1,
-      worldCopyJump: true,
+      maxBounds: bounds,
+      maxBoundsViscosity: 0.75,
     };
+
     this.map = new L.map('map', mapOptions);
     const layer = new L.TileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
       maxZoom: 6,
@@ -26,7 +30,8 @@ export default class WorldMap {
     });
     layer.addTo(this.map);
     this.addButtons();
-    this.generateMarkers(0);
+    this.generateMarkers(3);
+    this.generateBorders();
   }
 
   generateMarkers(index = 0) {
@@ -79,7 +84,7 @@ export default class WorldMap {
     };
     const marker = new L.Marker([lat, long], markerOptions);
     marker.addTo(this.map);
-    marker.bindPopup(`<strong>${country}</strong><br/><img class="icon-tooltip-flag" src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="Country flag"><br/><strong>${text}</strong>: ${new Intl.NumberFormat('ru-RU').format(numbers)}`);
+    // marker.bindPopup(`<strong>${country}</strong><br/><img class="icon-tooltip-flag" src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="Country flag"><br/><strong>${text}</strong>: ${new Intl.NumberFormat('ru-RU').format(numbers)}`);
   }
 
   static removeMarkers() {
@@ -157,7 +162,7 @@ export default class WorldMap {
     if (allMarkers.length) {
       allMarkers.forEach((el) => {
         if (el.dataset.iso2 === buttonIso) {
-          el.click();
+          el.classList.add('hover');
         }
       });
     }
@@ -287,5 +292,70 @@ export default class WorldMap {
     if (this.legendContainer) {
       this.legendContainer.classList.add('hidden-legend');
     }
+  }
+
+  generateBorders() {
+    d3.json(('borders.json'), (json) => {
+      function onEachFeature(feature, layer) {
+        layer.on({
+          click: onCountryClick,
+          mouseover: onCountryHighLight,
+          mouseout: onCountryMouseOut,
+        });
+      }
+      const geojson = L.geoJson(json, {
+        onEachFeature,
+        style,
+      }).addTo(this.map);
+      function onCountryMouseOut(e) {
+        geojson.resetStyle(e.target);
+        const el = document.querySelector('.hover');
+        if (el) {
+          el.classList.remove('hover');
+        }
+      }
+      function onCountryClick(e) {
+        const countryCode = e.target.feature.properties.ISO2;
+        const allMarkers = document.querySelectorAll('.icon-marker');
+        if (allMarkers.length) {
+          allMarkers.forEach((el) => {
+            if (el.dataset.iso2 === countryCode) {
+              el.click();
+            }
+          });
+        }
+      }
+      function onCountryHighLight(e) {
+        const layer = e.target;
+        layer.setStyle({
+          weight: 2,
+          color: '#666',
+          dashArray: '',
+          fillOpacity: 0.7,
+        });
+        if (!L.Browser.ie && !L.Browser.opera) {
+          layer.bringToFront();
+        }
+        const countryCode = e.target.feature.properties.ISO2;
+        const allMarkers = document.querySelectorAll('.icon-marker');
+        if (allMarkers.length) {
+          allMarkers.forEach((el) => {
+            if (el.dataset.iso2 === countryCode) {
+              el.classList.add('hover');
+            }
+          });
+        }
+      }
+
+      function style(feature) {
+        return {
+          fillColor: '#E3E3E3',
+          weight: 1,
+          opacity: 0.4,
+          color: 'white',
+          fillOpacity: 0.3,
+        };
+      }
+    });
   }
 }
