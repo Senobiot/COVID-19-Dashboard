@@ -11,7 +11,7 @@
     "build": "npm run clear -s && webpack --progress",
     "lint": "eslint ./**/*.js",
     "lint:fix": "eslint --fix --ext .js,.jsx .",
-    "clear": "del-cli dist"
+    "clear": "del-cli covid-dashboard"
   },
   "author": "HannaHerman, Sanazez, Senobiot",
   "license": "ISC",
