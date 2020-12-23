@@ -122,7 +122,10 @@
     }
   }
 
-  @media  (max-width: 767px)  { 
+  @media  (max-width: 767px)  {
+    .footer {
+        font-size: 12px;
+    }
     .tableTotalWrapper.fullScreen {
         font-size: 26px;
     }
