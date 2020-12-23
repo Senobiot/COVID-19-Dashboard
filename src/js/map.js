@@ -81,7 +81,6 @@ export default class WorldMap {
     };
     const marker = new L.Marker([lat, long], markerOptions);
     marker.addTo(this.map);
-    // marker.bindPopup(`<strong>${country}</strong><br/><img class="icon-tooltip-flag" src="https://www.countryflags.io/${iso2}/shiny/64.png" alt="Country flag"><br/><strong>${text}</strong>: ${new Intl.NumberFormat('ru-RU').format(numbers)}`);
   }
 
   static removeMarkers() {
