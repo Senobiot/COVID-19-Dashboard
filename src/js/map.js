@@ -14,13 +14,10 @@ export default class WorldMap {
     this.mapWrapper.classList.add('map-wrapper');
     this.mapWrapper.id = 'map';
     document.body.appendChild(this.mapWrapper);
-    const bounds = new L.LatLngBounds(new L.LatLng(84.67351257, -172.96875),
-      new L.LatLng(-54.36775852, 178.59375));
     const mapOptions = {
-      center: [15.118831526705586, -19.86028053148647],
+      center: [6.476935960920122, -11.730840280608804],
       zoom: 1,
-      maxBounds: bounds,
-      maxBoundsViscosity: 0.75,
+      worldCopyJump: true
     };
 
     this.map = new L.map('map', mapOptions);
@@ -223,7 +220,7 @@ export default class WorldMap {
   }
 
   expandFullScreen() {
-    this.mapWrapper.classList.toggle('fullscreen');
+    this.mapWrapper.classList.toggle('fullscreen-map');
     const currentZoom = this.map.getZoom();
     if (currentZoom < 2) {
       this.map.flyTo([55.660363, 18.532167], 2);
