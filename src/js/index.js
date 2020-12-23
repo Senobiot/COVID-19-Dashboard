@@ -14,13 +14,12 @@ import {
 } from './country_panel';
 import { graphBtnExportEvents, graphControlPanel } from './graph';
 import WorldMap from './map';
-import '../css/style_map.scss';
+
 import '../css/style_totals.scss';
 import CreateStatistics from './table-statistics';
 
 let dataCurrentRegion = '';
-
-let population = 7793895016;
+let population = '';
 const statistics = new CreateStatistics(document.body);
 const worldMap = new WorldMap();
 let isTotal = false; // Флаг выбора расчета показателей на все население или 100К
@@ -45,13 +44,14 @@ const createStatisticsCurrentCountry = async (iso2Country) => {
 const getTotalData = async () => {
   const response = await fetch('https://disease.sh/v3/covid-19/all?yesterday=false&twoDaysAgo=false');
   dataCurrentRegion = await response.json();
+  population = dataCurrentRegion.population;
 };
 
 // Обрабока клика по таблице статистики
 const addHandlerClickStatistics = () => {
   statistics.wrapperTable.addEventListener('mouseup', (e) => {
     const item = e.target;
-    if (item.tagName === 'SPAN' || item.tagName === 'LI') {
+    if (item.tagName === 'SPAN' || item.classList.contains('item__statistics')) {
       let currentLi = '';
       if (item.tagName === 'SPAN') {
         currentLi = item.closest('li');
@@ -81,12 +81,27 @@ const addHandlerClickStatistics = () => {
   });
 };
 
+const statisticsExportEvents = (index) => {
+  if (index > 5) {
+    isTotal = true;
+  } else {
+    isTotal = false;
+  }
+  statistics.switchToggle.dataset.index = index;
+  statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
+  statistics.switchToggleExportEvent(index);
+  worldMap.generateMarkers(index);
+};
+
 const addHandlerClickMap = () => {
   worldMap.mapWrapper.addEventListener('click', (event) => {
     const targetElement = event.target;
     if (targetElement.tagName === 'BUTTON') {
       const elIndex = targetElement.dataset.index;
       if (elIndex) {
+        statisticsExportEvents(Number(elIndex));
+        sortBtsEvent(Number(elIndex));
+        graphBtnExportEvents(Number(elIndex));
         worldMap.generateMarkers(elIndex);
         return;
       }
@@ -95,21 +110,10 @@ const addHandlerClickMap = () => {
       const elIso2 = targetElement.dataset.iso2;
       if (elIso2) {
         worldMap.changeView(elIso2);
-        return;
+        createStatisticsCurrentCountry(elIso2);
       }
     }
   });
-};
-
-const statisticsExportEvents = (index) => {
-  if (index > 5) {
-    isTotal = true;
-  } else {
-    isTotal = false;
-  }
-  statistics.generateListStatistics(dataCurrentRegion, Number(population), isTotal);
-  statistics.switchToggleExportEvent(index);
-  worldMap.generateMarkers(index);
 };
 
 const createStatisticsFirstOnload = () => {
@@ -160,5 +164,3 @@ searchResults.addEventListener('click', (event) => {
   const iso = event.target.getAttribute('data-iso2') || undefined;
   return iso ? createStatisticsCurrentCountry(iso) : event.stopImmediatePropagation();
 });
-
-export { createStatisticsCurrentCountry, statisticsExportEvents };
