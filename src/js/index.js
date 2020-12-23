@@ -93,7 +93,6 @@ const statisticsExportEvents = (index) => {
   worldMap.generateMarkers(index);
 };
 
-
 function getDataCurrentCountryForMap(iso2) {
   const countriesForGetData = Array.from(countriesList.childNodes);
   const country = countriesForGetData.find((e) => e.getAttribute('data-iso2') === iso2);
@@ -101,7 +100,6 @@ function getDataCurrentCountryForMap(iso2) {
   countriesList.childNodes[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
   getCurrentCountryData.call(country);
 }
-
 
 const addHandlerClickMap = () => {
   worldMap.mapWrapper.addEventListener('click', (event) => {
@@ -116,7 +114,7 @@ const addHandlerClickMap = () => {
         return;
       }
     }
-    
+
     if (targetElement.tagName === 'DIV') {
       const elIso2 = targetElement.dataset.iso2;
       if (elIso2) {

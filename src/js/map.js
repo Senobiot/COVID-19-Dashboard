@@ -8,7 +8,6 @@ export default class WorldMap {
       'GLP', 'VAT', 'HKG', 'IMN', 'MAC', 'MTQ', 'MYT', 'MSR', 'MMR', 'NCL', 'PSE', 'REU', 'MAF', 'SPM',
       'SXM', 'BLM', 'TCA', 'WLF', 'ESH', 'CYM'];
   }
-  
 
   generateLayout() {
     this.mapWrapper = document.createElement('div');
