@@ -13,6 +13,18 @@
   align-items: center;
 }
 
+@mixin map-buttons {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 77px;
+  height: 50%;
+  bottom: 23%;
+  z-index: 420;
+}
+
 .map-wrapper {
   position: absolute;
   top: 43%;
@@ -87,6 +99,11 @@
   }
 }
 
+.icon-tooltip-flag {
+  height: 30px;
+  width: 30px;
+}
+
 .leaflet-popup-content {
   font-size: 1rem;
 }
@@ -112,27 +129,24 @@
   height: 1.2em;
 }
 
-.map-buttons-list {
-  position: absolute;
-  bottom: 4%;
-  display: flex;
-  justify-content: center;
-  background: white;
-  height: 10%;
-  width: 100%;
-  z-index: 420;
+.map-buttons-list-left  {
+  @include map-buttons;
+}
+.map-buttons-list-right {
+  @include map-buttons;
+  right: 0;
 }
 
 .map-buttons-item {
   font-size: 0.9rem;
-  width: 8.4%;
-  height: 100%;
   @include flex-center;
   background: #696969;
   color: #fffaf0;
   text-transform: uppercase;
   transition: .3s;
   padding: 0 5px;
+  height: 16.7%;
+  width: 100%;
   border-right: 1px solid rgba(35,35,3,.8);
   cursor: pointer;
   &:hover {

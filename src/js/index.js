@@ -106,7 +106,8 @@ const addHandlerClickMap = () => {
         return;
       }
     }
-    if (targetElement.tagName === 'SPAN') {
+    
+    if (targetElement.tagName === 'DIV') {
       const elIso2 = targetElement.dataset.iso2;
       if (elIso2) {
         worldMap.changeView(elIso2);
