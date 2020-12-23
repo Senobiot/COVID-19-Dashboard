@@ -166,6 +166,11 @@ export default class CreateStatistics {
   async createContinents() {
     this.createPropertyContinent();
     await this.getTotalDataContinents();
+    const wrapperListsContinents = CreateStatistics.createDomElement('div', 'wrapper-lists');
+    const arrowRight = CreateStatistics.createDomElement('div', 'triangle-right');
+    const arrowLeft = CreateStatistics.createDomElement('div', 'triangle-left');
+    wrapperListsContinents.append(arrowLeft);
+    wrapperListsContinents.append(arrowRight);
     this.totalDataContinents.forEach((element, index) => {
       const ul = CreateStatistics.createDomElement('ul', 'list-continent');
       const liRegion = CreateStatistics.createDomElement('li', 'item__region');
@@ -189,7 +194,8 @@ export default class CreateStatistics {
       ul.append(liSumConfirmed);
       ul.append(liSumDeaths);
       ul.append(liSumRecovered);
-      this.continents.append(ul);
+      wrapperListsContinents.append(ul);
+      this.continents.append(wrapperListsContinents);
     });
   }
 

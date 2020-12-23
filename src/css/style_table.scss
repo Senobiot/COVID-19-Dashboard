@@ -17,7 +17,6 @@
     z-index: 1100;
     width: 100%;
     height: 95%;
-
     background-color: #b3b8ab;
     left: 0;
     @media screen and (min-width: 925px) {
@@ -25,7 +24,7 @@
         justify-content: space-around;
         display: flex;
         flex-direction: column;
-        max-width: 910px;
+        max-width: 950px;
         margin: 10px auto;
         border-radius: 5px;
       }
@@ -52,9 +51,18 @@
         width: 910px;
       }
     }
+    .current__text {
+      @media screen and (max-width: 1650px) {
+        white-space: nowrap;
+      }
+    }
   }
 }
-
+.current__text {
+  @media screen and (max-width: 1650px) {
+    white-space: normal;
+  }
+}
 .statistics__header {
   text-align: center;
   font-size: 2.4rem;
@@ -72,7 +80,6 @@
   white-space: nowrap;
   justify-content: center;
   column-gap: 8px;
-  min-width: 652.5px;
   box-shadow: inset 0 0 5px;
   background-color: rgba(35, 35, 3, 0.2);
   border-radius: 0 5px 5px;
@@ -101,9 +108,6 @@
   margin-bottom: 10px;
 }
 
-.current__data {
-  font-size: 2.5rem;
-}
 .current__statistics {
   width: 145px;
   margin-top: 20px;
@@ -176,13 +180,23 @@
   &:hover {
     cursor: pointer;
   }
+  @media screen and (max-width: 1650px) {
+    font-size: 1.6rem;
+  }
 }
 
 .continents {
   display: none;
   order: 3;
-  width: 685px;
+  width: 690px;
   padding: 10px 0 0 10px;
+  overflow: hidden;
+  @media screen and (max-width: 1650px) {
+    width: 465px;
+  }
+  @media screen and (max-width: 1350px) {
+    width: 375px;
+  }
 }
 
 .list-continent {
@@ -195,6 +209,7 @@
   &:last-child {
     border: none;
   }
+
   .item__region {
     margin-bottom: 12px;
   }
@@ -212,7 +227,13 @@
   display: none;
   padding: 0px 15px 16px 10px;
   column-gap: 40px;
-  width: 685px;
+  width: 690px;
+  justify-content: center;
+  @media screen and (max-width: 1650px) {
+    width: 465px;
+    justify-content: space-between;
+    column-gap: 0;
+  }
 }
 
 .list-properties {
@@ -228,4 +249,67 @@
 }
 .active_tab {
   background-color: rgba(35, 35, 3, 0.2);
+}
+.wrapper-lists {
+  display: flex;
+  @media screen and (max-width: 1650px) {
+    ul:nth-child(5) {
+      border: none;
+      margin-right: 20px;
+    }
+  }
+  @media screen and (max-width: 1350px) {
+    ul:nth-child(4) {
+      border: none;
+      margin-right: 20px;
+    }
+  }
+}
+.triangle-left {
+  border-right: 9px solid #404344;
+  display: none;
+  @media screen and (max-width: 1650px) {
+    display: block;
+    left: 165px;
+    top: 80px;
+  }
+}
+
+.triangle-right,
+.triangle-left {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  cursor: pointer;
+}
+
+.triangle-right {
+  border-left: 9px solid #404344;
+  display: none;
+  @media screen and (max-width: 1650px) {
+    display: block;
+    right: 20px;
+    top: 80px;
+  }
+}
+@media screen and (max-width: 1350px) {
+  .item__statistics {
+    font-size: 1.3rem;
+    min-width: 255px;
+  }
+  .wrapper-current-statistics {
+    padding: 0 5px 5px 0px;
+    width: 375px;
+  }
+  .current__property {
+    white-space: normal;
+  }
+}
+.current__data {
+  font-size: 2.5rem;
+  @media screen and (max-width: 1350px) {
+    font-size: 1.7rem;
+  }
 }
