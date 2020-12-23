@@ -33,6 +33,7 @@ export default class CreateStatistics {
     this.createFullScreen();
     this.fullScreen.addEventListener('click', () => {
       this.wrapperTable.classList.toggle('fullScreen');
+      this.body.classList.toggle('block');
     });
     subTitle.addEventListener('mouseup', (e) => {
       const item = e.target;
@@ -167,10 +168,12 @@ export default class CreateStatistics {
     this.createPropertyContinent();
     await this.getTotalDataContinents();
     const wrapperListsContinents = CreateStatistics.createDomElement('div', 'wrapper-lists');
-    const arrowRight = CreateStatistics.createDomElement('div', 'triangle-right');
-    const arrowLeft = CreateStatistics.createDomElement('div', 'triangle-left');
-    wrapperListsContinents.append(arrowLeft);
-    wrapperListsContinents.append(arrowRight);
+    this.arrowRight = CreateStatistics.createDomElement('div', 'triangle-right');
+    this.arrowLeft = CreateStatistics.createDomElement('div', 'triangle-left');
+    wrapperListsContinents.append(this.arrowLeft);
+    wrapperListsContinents.append(this.arrowRight);
+    this.lists = CreateStatistics.createDomElement('div', 'lists');
+
     this.totalDataContinents.forEach((element, index) => {
       const ul = CreateStatistics.createDomElement('ul', 'list-continent');
       const liRegion = CreateStatistics.createDomElement('li', 'item__region');
@@ -194,8 +197,51 @@ export default class CreateStatistics {
       ul.append(liSumConfirmed);
       ul.append(liSumDeaths);
       ul.append(liSumRecovered);
-      wrapperListsContinents.append(ul);
-      this.continents.append(wrapperListsContinents);
+      this.lists.append(ul);
+    });
+    wrapperListsContinents.append(this.lists);
+    this.continents.append(wrapperListsContinents);
+    this.addClickHandlerArrowRigth();
+    this.addClickHandlerArrowLeft();
+    this.stepWidth = 0;
+  }
+
+  addClickHandlerArrowRigth() {
+    this.arrowRight.addEventListener('mouseup', () => {
+      console.log(this.continents.offsetWidth);
+      if (this.continents.offsetWidth === 470) {
+        if (this.stepWidth > -270) {
+          this.stepWidth -= 270;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        }
+      } else if (this.continents.offsetWidth === 365) {
+        if (this.stepWidth > -360) {
+          this.stepWidth -= 180;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        }
+      } else if (this.continents.offsetWidth === 300) {
+        if (this.stepWidth > -450) {
+          this.stepWidth -= 90;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        }
+      }
+    });
+  }
+
+  addClickHandlerArrowLeft() {
+    this.arrowLeft.addEventListener('mouseup', () => {
+      if (this.stepWidth !== 0) {
+        if (this.continents.offsetWidth === 470) {
+          this.stepWidth += 270;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        } else if (this.continents.offsetWidth === 365) {
+          this.stepWidth += 180;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        } else if (this.continents.offsetWidth === 300) {
+          this.stepWidth += 90;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        }
+      }
     });
   }
 
