@@ -177,6 +177,7 @@ graphControlPanelTypeBtn.addEventListener('click', function clickGraphControlPan
 });
 
 fullScreenBtn.addEventListener('click', () => {
+  document.body.classList.toggle('block');
   graphWrapper.classList.toggle('fullScreen');
 });
 

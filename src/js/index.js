@@ -16,6 +16,7 @@ import { graphBtnExportEvents, graphControlPanel } from './graph';
 import WorldMap from './map';
 
 import '../css/style_totals.scss';
+import '../css/media_list.scss';
 import CreateStatistics from './table-statistics';
 
 let dataCurrentRegion = '';
