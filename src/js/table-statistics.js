@@ -33,6 +33,7 @@ export default class CreateStatistics {
     this.createFullScreen();
     this.fullScreen.addEventListener('click', () => {
       this.wrapperTable.classList.toggle('fullScreen');
+      this.body.classList.toggle('block');
     });
     subTitle.addEventListener('mouseup', (e) => {
       const item = e.target;
@@ -207,9 +208,20 @@ export default class CreateStatistics {
 
   addClickHandlerArrowRigth() {
     this.arrowRight.addEventListener('mouseup', () => {
-      if (this.stepWidth > -360) {
-        if (this.statisticsContent.offsetWidth === 375) {
+      console.log(this.continents.offsetWidth);
+      if (this.continents.offsetWidth === 470) {
+        if (this.stepWidth > -270) {
+          this.stepWidth -= 270;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        }
+      } else if (this.continents.offsetWidth === 365) {
+        if (this.stepWidth > -360) {
           this.stepWidth -= 180;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        }
+      } else if (this.continents.offsetWidth === 300) {
+        if (this.stepWidth > -450) {
+          this.stepWidth -= 90;
           this.lists.style = `transform: translateX(${this.stepWidth}px)`;
         }
       }
@@ -219,8 +231,14 @@ export default class CreateStatistics {
   addClickHandlerArrowLeft() {
     this.arrowLeft.addEventListener('mouseup', () => {
       if (this.stepWidth !== 0) {
-        this.stepWidth += 180;
-        if (this.statisticsContent.offsetWidth === 375) {
+        if (this.continents.offsetWidth === 470) {
+          this.stepWidth += 270;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        } else if (this.continents.offsetWidth === 365) {
+          this.stepWidth += 180;
+          this.lists.style = `transform: translateX(${this.stepWidth}px)`;
+        } else if (this.continents.offsetWidth === 300) {
+          this.stepWidth += 90;
           this.lists.style = `transform: translateX(${this.stepWidth}px)`;
         }
       }
