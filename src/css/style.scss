@@ -5,11 +5,6 @@ $font_1: 'Cairo', sans-serif;
 $font_2: 'Rubik', sans-serif;
 
 body {
-    // display: grid;
-    // grid-template-columns: repeat(5, 1fr);
-    // grid-template-rows: 0.1fr 0.8fr 0.1fr 1fr;
-    // grid-column-gap: 5px;
-    // grid-row-gap: 5px;
     position: relative;
     font-family: $font_2;
     overflow: hidden;
@@ -59,4 +54,10 @@ body {
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
+@media  (max-width: 767px)  {
+    .header {
+        font-size: 18px;
+    }
 }
