@@ -14,18 +14,41 @@ export default class WorldMap {
     this.mapWrapper.classList.add('map-wrapper');
     this.mapWrapper.id = 'map';
     document.body.appendChild(this.mapWrapper);
-    const mapOptions = {
-      center: [6.476935960920122, -11.730840280608804],
-      zoom: 1,
-      worldCopyJump: true,
-    };
+    const southWest = L.latLng(-89.98155760646617, -180);
+    const northEast = L.latLng(89.99346179538875, 180);
 
-    this.map = new L.map('map', mapOptions);
+    const bounds = L.latLngBounds(southWest, northEast);
     const layer = new L.TileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
       maxZoom: 6,
       minZoom: 1,
+      maxBoundsViscocity: 0.5,
+      opacity: 0.8,
     });
-    layer.addTo(this.map);
+    const simpleLayer = new L.TileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}', {
+      minZoom: 1,
+      maxZoom: 6,
+      opacity: 0,
+      fadeAnimation: true,
+      zoomAnimation: true,
+      ext: 'png',
+      maxBoundsViscocity: 0.5,
+      dragging: false
+    });
+    const mapOptions = {
+      center: bounds.getCenter(),
+      zoom: 1,
+      layers: [layer],
+      maxBounds: bounds,
+      maxBoundsViscosity: 1.0,
+      opacity: 1,
+    };
+    this.map = new L.map('map', mapOptions);
+    this.map.setView([31.505, 28.09], 1);
+    const baseMaps = {
+      "DAY": simpleLayer,
+      'NIGHT': layer
+    };
+    L.control.layers(baseMaps).addTo(this.map);
     this.addButtons();
     this.generateMarkers(3);
     this.generateBorders();
@@ -102,22 +125,15 @@ export default class WorldMap {
   }
 
   addButtons() {
-    const leftElement = document.createElement('div');
-    this.mapWrapper.appendChild(leftElement);
-    leftElement.classList.add('map-buttons-list-left');
-    const rightElement = document.createElement('div');
-    this.mapWrapper.appendChild(rightElement);
-    rightElement.classList.add('map-buttons-list-right');
+    const buttonElement = document.createElement('div');
+    this.mapWrapper.appendChild(buttonElement);
+    buttonElement.classList.add('map-buttons-list');
     this.infoToRender.forEach((el, ind) => {
       const listItem = document.createElement('button');
       listItem.classList.add('map-buttons-item');
       listItem.dataset.index = ind;
       listItem.textContent = `${el}`;
-      if (ind < 6) {
-        leftElement.appendChild(listItem);
-      } else if (ind > 5) {
-        rightElement.appendChild(listItem);
-      }
+      buttonElement.appendChild(listItem);
     });
     const expandButton = document.createElement('button');
     this.mapWrapper.appendChild(expandButton);
@@ -225,6 +241,7 @@ export default class WorldMap {
   expandFullScreen() {
     this.mapWrapper.classList.toggle('fullscreen-map');
     const currentZoom = this.map.getZoom();
+    this.map._onResize();
     if (currentZoom < 2) {
       this.map.flyTo([55.660363, 18.532167], 2);
     }
