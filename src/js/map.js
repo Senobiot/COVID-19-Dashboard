@@ -155,6 +155,10 @@ export default class WorldMap {
   showChoosenCountry(buttonIso) {
     const countryCoordinates = this.getСoordinates(buttonIso);
     const allMarkers = document.querySelectorAll('.icon-marker');
+    const el = document.querySelector('.hover');
+    if (el) {
+      el.classList.remove('hover');
+    }
     if (allMarkers.length) {
       allMarkers.forEach((el) => {
         if (el.dataset.iso2 === buttonIso) {
