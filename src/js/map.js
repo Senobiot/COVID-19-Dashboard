@@ -197,7 +197,9 @@ export default class WorldMap {
   static countMaxValue(param, cInfo) {
     const arr = [];
     cInfo.forEach((val) => {
-      arr.push(val[param]);
+      if (val[param]) {
+        arr.push(val[param]);
+      }
     });
     arr.sort((a, b) => a - b);
     arr.splice(arr.length - 4);

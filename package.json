@@ -33,6 +33,7 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-loader": "^3.0.4",
     "eslint-plugin-import": "^2.22.1",
+    "esm": "^3.2.25",
     "file-loader": "^4.3.0",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
@@ -51,8 +52,6 @@
   },
   "dependencies": {
     "core-js": "^3.8.1",
-    "esm": "^3.2.25",
     "regenerator-runtime": "^0.13.7"
-  },
-  "type": "module"
+  }
 }
