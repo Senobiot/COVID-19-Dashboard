@@ -5,6 +5,7 @@ $font_1: "Cairo", sans-serif;
 $font_2: "Rubik", sans-serif;
 
 .graphWrapper {
+<<<<<<< HEAD
   // grid-area: 2 / 2 / 3 / 6;
   height: 350px;
   // margin: 0 auto;
@@ -39,6 +40,44 @@ $font_2: "Rubik", sans-serif;
       height: 100%;
       background: #b7bcb1 url("../img/loading2.gif") 50% no-repeat;
       opacity: 0.8;
+=======
+    // grid-area: 2 / 2 / 3 / 6;
+    height: 350px;
+    // margin: 0 auto;
+    // position: relative; 
+    position: absolute;
+    width: 42%;
+    top: calc(5% + 2px);
+    left: calc(20% + 2px);
+    height: 33%;
+    box-shadow: inset 0 0 10px;
+    background-color: #b7bcb1;
+    display: flex;
+    flex-direction: column;
+    transition: 0.5s;
+    font-size: 24px;
+    border-radius: 5px;
+    overflow: hidden;
+    &.fullScreen {
+        width: 100%;
+        height: calc(95% - 30px);
+        z-index: 1100;
+        font-size: 42px;
+        left: 0; 
+
+    }
+    &.loading {
+           &:after {  
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #b7bcb1 url('../img/loading2.gif') 50% no-repeat;
+                opacity: 0.8;
+        } 
+>>>>>>> 994ee1a... feat: add footer and virtual keyboard
     }
   }
 }
