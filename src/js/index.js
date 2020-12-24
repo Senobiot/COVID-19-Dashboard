@@ -5,8 +5,7 @@ import '../css/style_graph.scss';
 import '../css/style_list.scss';
 import '../css/style_map.scss';
 import '../css/style_table.scss';
-import '../../node_modules/leaflet/dist/leaflet.css';
-import '../../node_modules/leaflet/dist/leaflet';
+import '../css/style_keyboard.scss';
 import './header';
 import './table_total';
 import {
@@ -14,10 +13,10 @@ import {
 } from './country_panel';
 import { graphBtnExportEvents, graphControlPanel } from './graph';
 import WorldMap from './map';
-
 import '../css/style_totals.scss';
 import '../css/media_list.scss';
 import CreateStatistics from './table-statistics';
+import './kyeboard';
 
 let dataCurrentRegion = '';
 let population = '';
