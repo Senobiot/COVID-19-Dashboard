@@ -1,10 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /*run command*/
 /* npm run test tests/test-map.js */
 require = require('esm')(module);
 const mocha = require('mocha');
 const chai = require('chai');
-const WorldMap = require('./index');
+const WorldMap = require('./unit-map');
 
 const expect = chai.expect;
 

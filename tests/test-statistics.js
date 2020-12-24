@@ -3,7 +3,7 @@
 require = require('esm')(module/* , options */);
 const mocha = require('mocha');
 const chai = require('chai');
-const create = require('./index');
+const create = require('./unit-statistics');
 
 const { expect } = chai;
 
