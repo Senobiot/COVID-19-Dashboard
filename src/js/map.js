@@ -17,7 +17,7 @@ export default class WorldMap {
     const mapOptions = {
       center: [6.476935960920122, -11.730840280608804],
       zoom: 1,
-      worldCopyJump: true
+      worldCopyJump: true,
     };
 
     this.map = new L.map('map', mapOptions);
