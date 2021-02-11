@@ -1,0 +1,190 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;700;900&display=swap");
+
+$font_1: "Cairo", sans-serif;
+$font_2: "Rubik", sans-serif;
+
+.graphWrapper {
+    // grid-area: 2 / 2 / 3 / 6;
+    height: 350px;
+    // margin: 0 auto;
+    // position: relative; 
+    position: absolute;
+    width: 42%;
+    top: calc(5% + 2px);
+    left: calc(20% + 2px);
+    height: 33%;
+    box-shadow: inset 0 0 10px;
+    background-color: #b7bcb1;
+    display: flex;
+    flex-direction: column;
+    transition: 0.5s;
+    font-size: 24px;
+    border-radius: 5px;
+    overflow: hidden;
+    &.fullScreen {
+        width: 100%;
+        height: calc(95% - 30px);
+        z-index: 1100;
+        font-size: 42px;
+        left: 0; 
+
+    }
+    &.loading {
+           &:after {  
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: #b7bcb1 url('../img/loading2.gif') 50% no-repeat;
+                opacity: 0.8;
+        } 
+    }
+  }
+
+.graphSwitcherType,
+.graphSwitcherData {
+  appearance: none;
+  width: 56px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid #696969;
+  transition: 0.2s;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.6em;
+  letter-spacing: 2px;
+  font-family: $font_1;
+  box-shadow: inset 0 0 10px;
+  background-color: rgba(35, 35, 3, 0.2);
+  color: #fffaf0;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 10px;
+  position: absolute;
+  top: 10px;
+  right: 50px;
+
+  &:focus {
+    outline: none;
+  }
+  &:before {
+    position: absolute;
+    top: -1px;
+    right: 5px;
+    content: "bar";
+  }
+  &:after {
+    content: "";
+    width: 16px;
+    height: 17px;
+    background: #696969;
+    position: absolute;
+    top: 0px;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    transition: 0.2s;
+    box-shadow: 1px 0 5px -1px rgba(0, 0, 0, 0.2);
+  }
+  &:checked {
+    padding: 0 12px 0 0;
+    &:before {
+      content: "line";
+      left: 5px;
+    }
+    &:after {
+      left: 37px;
+      box-shadow: -1px 0 5px -1px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+.graphSwitcherData {
+  left: 10px;
+  width: 100px;
+  &:before {
+    content: "all people";
+  }
+  &:checked {
+    &:before {
+      content: "per 100k";
+    }
+    &:after {
+      left: 81px;
+      border-radius: 0 3px 3px 0;
+    }
+  }
+}
+
+.chartjs-render-monitor,
+.chartjs-size-monitor {
+  width: 99% !important;
+  height: 92% !important;
+  margin: 0 auto;
+}
+.graphControlPanel {
+  width: 100%;
+  border: 1px solid #000;
+  display: flex;
+  justify-content: space-around;
+  height: 8%;
+}
+
+.graphDataBtn {
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: dimgray;
+  color: floralwhite;
+  font-size: 0.35em;
+  text-transform: uppercase;
+  transition: 0.3s;
+  padding: 0 8px;
+  cursor: pointer;
+  &:nth-child(6),
+  &:nth-child(7),
+  &:nth-child(8) {
+    padding: 0 17px;
+  }
+  &.active {
+    background-color: #488f8f;
+    box-shadow: inset 0 0 10px;
+    background-color: rgba(35, 35, 3, 0.8);
+  }
+  &:not(:last-child) {
+    border-right: 1px solid rgba(35, 35, 3, 0.8);
+  }
+  &:hover {
+    background-color: #488f8f;
+    box-shadow: inset 0 0 10px;
+    background-color: rgba(35, 35, 3, 0.8);
+  }
+  &:active {
+    transform: translate(2px, 2px);
+  }
+  &.hidden {
+    display: none;
+  }
+}
+.fullScreenGraph {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  background: url("../img/fullscreen.png") 50% / cover no-repeat;
+  transition: 1s;
+  @keyframes fullscreenBtnAnimation {
+    50% {
+      transform: scale(0.6);
+    }
+  }
+  &:hover {
+    animation: fullscreenBtnAnimation 1s linear infinite;
+  }
+}
